@@ -10,13 +10,49 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @InheritanceType("JOINED")
  * @DiscriminatorColumn(name="type", type="string")
  * @DiscriminatorMap({"user"="User", "formateur"="Formateur", "apprenant"="Apprenant"})
- * @ApiResource
+ * @UniqueEntity(
+ *      fields={"email"},
+ *      message="L'email existe déjà"
+ * )
+ * @ApiResource(
+ *      attributes={
+ *          "pagination_items_per_page"=2,
+ *          "pagination_client_items_per_page"=true,
+ *          "security"="is_granted('ROLE_ADMIN')",
+ *          "security_message"="Vous n'avez accès à cette ressource"
+ *      },
+ *      normalizationContext={"groups"={"user_read"}},
+ *      collectionOperations={
+ *          "get_users"={
+ *              "method"="GET",
+ *              "path"="/admin/users"
+ *          },
+ *          "create_users"={
+ *              "method"="POST",
+ *              "path"="/admin/users",
+ *              "deserialize"=false
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get_user"={
+ *              "method"="GET",
+ *              "path"="/admin/users/{id}",
+ *              "normalization_context"={"groups"={"user_read", "user_read_all"}}
+ *          },
+ *          "update_user"={
+ *              "method"="PUT",
+ *              "path"="/admin/users/{id}"
+ *          }
+ *      }
+ * )
  */
 class User implements UserInterface
 {
@@ -24,12 +60,15 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"profil_read_user"})
+     * @Groups({"user_read", "profil_read_user"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\NotBlank(message="L'email ne doit pas être vide.")
+     * @Assert\Email(message = "L'email '{{ value }}' n'est pas valid.")
+     * @Groups({"user_read"})
      */
     protected $email;
 
@@ -43,34 +82,40 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"profil_read_user"})
+     * @Assert\NotBlank(message="Le prénom ne doit pas être vide.")
+     * @Groups({"user_read", "profil_read_user"})
      */
     protected $prenom;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"profil_read_user"})
+     * @Assert\NotBlank(message="Le nom ne doit pas être vide.")
+     * @Groups({"user_read", "profil_read_user"})
      */
     protected $nom;
 
     /**
      * @ORM\Column(type="blob", nullable=true)
+     * @Groups({"user_read_all"})
      */
     protected $avatar;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"user_read"})
      */
     protected $statut;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"user_read"})
      */
     protected $isDeleted;
 
     /**
      * @ORM\ManyToOne(targetEntity=Profil::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"user_read_all"})
      */
     protected $profil;
 
@@ -184,7 +229,7 @@ class User implements UserInterface
 
     public function getAvatar()
     {
-        return $this->avatar;
+        return \base64_encode(stream_get_contents($this->avatar));
     }
 
     public function setAvatar($avatar): self
