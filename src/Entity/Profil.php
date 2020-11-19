@@ -4,12 +4,14 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ProfilRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
@@ -18,6 +20,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      fields={"libelle"},
  *      message="Le libelle existe déjà"
  * )
+ * @ApiFilter(BooleanFilter::class, properties={"isDeleted"})
  * @ApiResource(
  *      attributes = {
  *          "pagination_items_per_page"=2,
@@ -51,10 +54,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *          "update_profil" = {
  *              "method" = "PUT",
  *              "path" = "/admin/profils/{id}"
- *          },
- *          "delete_profil" = {
- *              "method" = "DELETE",
- *              "path" = "/admin/profils/{id}"
  *          }
  *      }
  * )
@@ -83,8 +82,15 @@ class Profil
      */
     private $users;
 
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"profil_read_user"})
+     */
+    private $isDeleted;
+
     public function __construct()
     {
+        $this->isDeleted = false;
         $this->users = new ArrayCollection();
     }
 
@@ -131,6 +137,18 @@ class Profil
                 $user->setProfil(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIsDeleted(): ?bool
+    {
+        return $this->isDeleted;
+    }
+
+    public function setIsDeleted(bool $isDeleted): self
+    {
+        $this->isDeleted = $isDeleted;
 
         return $this;
     }
