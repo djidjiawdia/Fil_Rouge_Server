@@ -20,7 +20,7 @@ security:
             stateless: true
             anonymous: true
             json_login:
-                username_path: login
+                username_path: email
                 check_path: /api/login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
@@ -48,3 +48,5 @@ security:
 
     role_hierarchy:
         ROLE_ADMIN: [ROLE_FORMATEUR, ROLE_APPRENANT, ROLE_CM]
+        ROLE_FORMATEUR: [ROLE_APPRENANT]
+        ROLE_CM: [ROLE_APPRENANT]

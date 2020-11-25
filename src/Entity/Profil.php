@@ -22,38 +22,43 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * )
  * @ApiFilter(BooleanFilter::class, properties={"isDeleted"})
  * @ApiResource(
+ *      routePrefix="/admin/profils",
  *      attributes = {
+ *          "security"="is_granted('ROLE_ADMIN')",
+ *          "security_message"="Vous n'avez pas accès à cette ressource",
  *          "pagination_items_per_page"=2,
- *          "pagination_client_items_per_page"=true,
- *          "security" = "is_granted('ROLE_ADMIN')",
- *          "security_message" =  "Vous n'avez pas droit à cette ressource"
+ *          "pagination_client_items_per_page"=true
  *      },
  *      normalizationContext = {"groups"={"profil_read"}},
  *      subresourceOperations = {
  *          "users_get_subresource" = {
  *              "method" = "GET",
- *              "path" = "/admin/profils/{id}/users",
+ *              "path" = "admin/profils/{id}/users",
  *              "normalization_context" = {"groups"={"profil_read_user"}}
  *          }
  *      },
  *      collectionOperations = {
  *          "get_profils" = {
  *              "method" = "GET",
- *              "path" = "/admin/profils"
+ *              "path"="/"
  *          },
- *          "create_profils" = {
+ *          "create_profil" = {
  *              "method" = "POST",
- *              "path" = "/admin/profils"
+ *              "path"=""
  *          }
  *      },
  *      itemOperations = {
  *          "get_profil" = {
  *              "method" = "GET",
- *              "path" = "/admin/profils/{id}"
+ *              "path" = "/{id}"
  *          },
  *          "update_profil" = {
  *              "method" = "PUT",
- *              "path" = "/admin/profils/{id}"
+ *              "path" = "/{id}"
+ *          },
+ *          "delete_profil" = {
+ *              "method" = "DELETE",
+ *              "path" = "/{id}"
  *          }
  *      }
  * )

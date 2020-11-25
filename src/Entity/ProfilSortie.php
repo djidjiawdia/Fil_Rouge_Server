@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ProfilSortieRepository::class)
@@ -22,6 +23,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ApiResource(
  *      routePrefix="/admin/profilsorties",
  *      attributes={
+ *          "pagination_items_per_page"=2,
+ *          "pagination_client_items_per_page"=true,
  *          "security"="is_granted('ROLE_ADMIN')",
  *          "security_message"="Vous n'avez accès à cette ressource"
  *      },
@@ -30,7 +33,21 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *          "get_profilsorties"={
  *              "method"="GET",
  *              "path"="/",
- *              "defaults"={"isDeleted"=0}
+ *              "defaults"={"isDeleted"=true}
+ *          },
+ *          "create_profilsortie"={
+ *              "method"="POST",
+ *              "path"="",
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get_profilsortie"={
+ *              "method"="GET",
+ *              "path"="/{id}"
+ *          },
+ *          "update_profilsortie"={
+ *              "method"="PUT",
+ *              "path"="/{id}"
  *          }
  *      }
  * )
@@ -47,6 +64,7 @@ class ProfilSortie
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le libellé ne doit pas être vide!")
      * @Groups({"profilsortie_read"})
      */
     private $libelle;

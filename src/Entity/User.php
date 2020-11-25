@@ -23,6 +23,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      message="L'email existe déjà"
  * )
  * @ApiResource(
+ *      routePrefix="/admin",
  *      attributes={
  *          "pagination_items_per_page"=2,
  *          "pagination_client_items_per_page"=true,
@@ -31,25 +32,20 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      },
  *      normalizationContext={"groups"={"user_read"}},
  *      collectionOperations={
- *          "get_users"={
- *              "method"="GET",
- *              "path"="/admin/users"
- *          },
- *          "create_users"={
+*           "GET",
+ *          "create_user"={
  *              "method"="POST",
- *              "path"="/admin/users",
  *              "deserialize"=false
  *          }
  *      },
  *      itemOperations={
  *          "get_user"={
  *              "method"="GET",
- *              "path"="/admin/users/{id}",
  *              "normalization_context"={"groups"={"user_read", "user_read_all"}}
  *          },
  *          "update_user"={
  *              "method"="PUT",
- *              "path"="/admin/users/{id}"
+ *              "deserialize"=false
  *          }
  *      }
  * )
@@ -82,14 +78,12 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Le prénom ne doit pas être vide.")
      * @Groups({"user_read", "profil_read_user"})
      */
     protected $prenom;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Le nom ne doit pas être vide.")
      * @Groups({"user_read", "profil_read_user"})
      */
     protected $nom;
@@ -128,6 +122,13 @@ class User implements UserInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getEmail(): ?string
