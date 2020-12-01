@@ -23,8 +23,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *      routePrefix="/admin/profilsorties",
  *      attributes={
- *          "pagination_items_per_page"=2,
- *          "pagination_client_items_per_page"=true,
  *          "security"="is_granted('ROLE_ADMIN')",
  *          "security_message"="Vous n'avez accès à cette ressource"
  *      },
@@ -32,12 +30,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      collectionOperations={
  *          "get_profilsorties"={
  *              "method"="GET",
- *              "path"="/",
- *              "defaults"={"isDeleted"=true}
+ *              "path"="/"
  *          },
  *          "create_profilsortie"={
  *              "method"="POST",
- *              "path"="",
+ *              "path"=""
  *          }
  *      },
  *      itemOperations={

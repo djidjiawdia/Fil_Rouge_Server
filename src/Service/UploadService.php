@@ -29,7 +29,8 @@ final class UploadService
         return $data;
     }
 
-    private function uploadFile(string $img) {
+    private function uploadFile(string $img)
+    {
         $file = fopen("php://memory", "r+");
         fwrite($file, $img);
         rewind($file);

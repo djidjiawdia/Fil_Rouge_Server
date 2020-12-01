@@ -17,22 +17,25 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @InheritanceType("JOINED")
  * @DiscriminatorColumn(name="type", type="string")
- * @DiscriminatorMap({"user"="User", "formateur"="Formateur", "apprenant"="Apprenant"})
+ * @DiscriminatorMap({"admin"="User", "formateur"="Formateur", "apprenant"="Apprenant", "cm"="CommunityManager"})
  * @UniqueEntity(
  *      fields={"email"},
  *      message="L'email existe déjà"
  * )
  * @ApiResource(
- *      routePrefix="/admin",
+ *      routePrefix="/admin/users",
  *      attributes={
- *          "pagination_items_per_page"=2,
- *          "pagination_client_items_per_page"=true,
+ *          "pagination_enabled"=true,
+ *          "pagination_items_per_page"=3,
  *          "security"="is_granted('ROLE_ADMIN')",
  *          "security_message"="Vous n'avez accès à cette ressource"
  *      },
  *      normalizationContext={"groups"={"user_read"}},
  *      collectionOperations={
-*           "GET",
+ *           "get_users"={
+ *               "method"="GET",
+ *               "path"="/"
+ *           },
  *          "create_user"={
  *              "method"="POST",
  *              "deserialize"=false
@@ -41,10 +44,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      itemOperations={
  *          "get_user"={
  *              "method"="GET",
+ *              "path"="/{id}",
  *              "normalization_context"={"groups"={"user_read", "user_read_all"}}
  *          },
  *          "update_user"={
  *              "method"="PUT",
+ *              "path"="/{id}",
  *              "deserialize"=false
  *          }
  *      }

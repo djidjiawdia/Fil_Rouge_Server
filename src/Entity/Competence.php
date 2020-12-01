@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=CompetenceRepository::class)
@@ -16,15 +17,26 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      message="Le libelle est déjà utilisé"
  * )
  * @ApiResource(
- *      routePrefix="admin/competences",
+ *      routePrefix="/admin",
  *      collectionOperations={
- *          "get_competence"={
+ *          "get_competences"={
  *              "method"="GET",
- *              "path"="/",
  *              "security"="is_granted('COMPETENCE_VIEW', object)",
  *              "security_message"="Vous n'avez pas accès à cette ressource."
+ *          },
+ *          "create_competence"={
+ *              "method"="POST",
+ *              "deserialize"=false
  *          }
- *      }
+ *      },
+ *      itemOperations={
+ *          "get_competence"={
+ *              "method"="GET",
+ *          },
+ *          "update_competence"={
+ *              "method"="PUT",
+ *          }
+ *      },
  * )
  */
 class Competence
@@ -38,23 +50,40 @@ class Competence
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le libellé ne doit pas être vide."))
      */
     private $libelle;
 
     /**
-     * @ORM\OneToMany(targetEntity=Niveau::class, mappedBy="competence")
+     * @ORM\OneToMany(targetEntity=Niveau::class, mappedBy="competence", cascade={"persist"})
+     * @Assert\Valid
+     * @Assert\Count(
+     *      min=3,
+     *      max=3,
+     *      exactMessage="Vous devrez avoir exactement {{ limit }} niveaux"
+     * )
      */
     private $niveaux;
 
     /**
-     * @ORM\ManyToMany(targetEntity=GroupeCompetence::class, mappedBy="competences")
+     * @ORM\ManyToMany(targetEntity=GroupeCompetence::class, mappedBy="competences", cascade={"persist"})
+     * @Assert\Count(
+     *      min=1,
+     *      minMessage="Affecter au moins un groupe de competences"
+     * )
      */
     private $groupeCompetences;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isDeleted;
 
     public function __construct()
     {
         $this->niveaux = new ArrayCollection();
         $this->groupeCompetences = new ArrayCollection();
+        $this->isDeleted = false;
     }
 
     public function getId(): ?int
@@ -127,6 +156,18 @@ class Competence
         if ($this->groupeCompetences->removeElement($groupeCompetence)) {
             $groupeCompetence->removeCompetence($this);
         }
+
+        return $this;
+    }
+
+    public function getIsDeleted(): ?bool
+    {
+        return $this->isDeleted;
+    }
+
+    public function setIsDeleted(bool $isDeleted): self
+    {
+        $this->isDeleted = $isDeleted;
 
         return $this;
     }

@@ -17,6 +17,12 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *              "normalization_context"={"groups"={"user_read"}},
  *              "security"="is_granted('ROLE_FORMATEUR') or is_granted('ROLE_CM')",
  *              "security_message"="Vous n'avez pas accès à cette ressource"
+ *          },
+ *          "create_apprenant"={
+ *              "method"="POST",
+ *              "deserialize"=false,
+ *              "security"="is_granted('ROLE_FORMATEUR')",
+ *              "security_message"="Vous n'avez pas accès à cette ressource"
  *          }
  *      },
  *      itemOperations={

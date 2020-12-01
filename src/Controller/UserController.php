@@ -18,11 +18,9 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserController extends AbstractController
 {
-    private $req;
-    private $denormalizer;
-    private $profilRepo;
+    static $att_name = "admin";
+
     private $em;
-    private $encoder;
     private $validator;
     private $uploadSer;
     private $userService;
@@ -59,11 +57,12 @@ class UserController extends AbstractController
      * )
      */
     public function createUser(Request $req) {
-        $user = $this->userService->createUser($req);
+        $user = $this->userService->createUser($req, self::$att_name);
         // dd($user);
         $this->em->persist($user);
         $this->em->flush();
-        return $this->json($user, Response::HTTP_CREATED);
+        
+        return $this->json($user, Response::HTTP_CREATED, [], ["groups" => "user_read"]);
     }
 
     /**
@@ -78,7 +77,7 @@ class UserController extends AbstractController
      *      }
      * )
      */
-    public function updateUser(Request $req, int $id, UserRepository $userRepo)
+    public function updateUser(Request $req, int $id, UserRepository $userRepo): Response
     {
         $user = $userRepo->find($id);
         if($user && !$user->getIsDeleted()) {
@@ -87,14 +86,9 @@ class UserController extends AbstractController
             $user = $this->userService->updateUser($user, $userTab);
             // dd($user);
 
-            $errors = $this->validator->validate($user);
-            if($errors){
-                return $this->json($errors, Response::HTTP_BAD_REQUEST);
-            }
-            
             $this->em->flush();
         }
         
-        return $this->json($user, Response::HTTP_OK);
+        return $this->json($user, Response::HTTP_OK, [], ["groups" => "user_read"]);
     }
 }

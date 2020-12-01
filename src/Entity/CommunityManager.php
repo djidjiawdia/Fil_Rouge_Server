@@ -2,49 +2,46 @@
 
 namespace App\Entity;
 
-use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\FormateurRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Repository\CommunityManagerRepository;
 
 /**
- * @ORM\Entity(repositoryClass=FormateurRepository::class)
+ * @ORM\Entity(repositoryClass=CommunityManagerRepository::class)
  * @ApiResource(
  *      collectionOperations={
- *          "get_formateurs"={
+ *          "get_cmangers"={
  *              "method"="GET",
- *              "path"="/formateurs",
+ *              "path"="/cmangers",
  *              "normalization_context"={"groups"={"user_read"}},
- *              "security"="is_granted('ROLE_CM')",
+ *              "security"="is_granted('ROLE_ADMIN')",
  *              "security_message"="Vous n'avez pas accès à cette ressource"
  *          },
- *          "create_formateur"={
+ *          "create_cmanger"={
  *              "method"="POST",
- *              "path"="/formateurs",
  *              "deserialize"=false,
  *              "security"="is_granted('ROLE_ADMIN')",
  *              "security_message"="Vous n'avez pas accès à cette ressource"
  *          }
  *      },
  *      itemOperations={
- *          "get_formateur"={
+ *          "get_cmanager"={
  *              "method"="GET",
- *              "path"="/formateurs/{id}",
+ *              "path"="/cmangers/{id}",
  *              "normalization_context"={"groups"={"user_read", "user_read_all"}},
- *              "security"="is_granted('FORMATEUR_VIEW', object)",
+ *              "security"="is_granted('CM_VIEW', object)",
  *              "security_message"="Vous n'avez pas accès à cette ressource"
  *          },
- *          "update_formateur"={
+ *          "update_cmanager"={
  *              "method"="PUT",
- *              "path"="/formateurs/{id}",
- *              "deserialize"=false,
- *              "security"="is_granted('FORMATEUR_EDIT', object)",
+ *              "path"="/cmangers/{id}",
+ *              "security"="is_granted('CM_EDIT', object)",
  *              "security_message"="Vous n'avez pas accès à cette ressource"
  *          },
  *      }
  * )
  */
-class Formateur extends User
+class CommunityManager extends User
 {
-    
+
 }

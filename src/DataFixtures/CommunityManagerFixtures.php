@@ -2,15 +2,13 @@
 
 namespace App\DataFixtures;
 
-use Faker;
-use App\Entity\User;
-use App\Entity\Profil;
+use App\Entity\CommunityManager;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Faker;
 
-class UserFixtures extends Fixture implements DependentFixtureInterface
+class CommunityManagerFixtures extends Fixture
 {
     private $encoder;
     
@@ -18,19 +16,19 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
     {
         $this->encoder = $encoder;
     }
-
-    public function load(ObjectManager $manager) 
+    
+    public function load(ObjectManager $manager)
     {
         $faker = Faker\Factory::create();
         for($i=0; $i<2; $i++) {
-            $profil = $this->getReference(ProfilFixtures::getRefKey(0));
-            $user = new User();
+            $profil = $this->getReference(ProfilFixtures::getRefKey(3));
+            $user = new CommunityManager();
             $user
                 ->setPrenom($faker->firstName)
                 ->setNom($faker->lastName)
-                ->setEmail('admin'.($i+1).'@test.com')
+                ->setEmail('cm'.($i+1).'@test.com')
                 ->setProfil($profil)
-                ->setPassword($this->encoder->encodePassword($user, "admin"))
+                ->setPassword($this->encoder->encodePassword($user, "test"))
             ;
 
             $manager->persist($user);
