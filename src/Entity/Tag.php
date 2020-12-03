@@ -9,6 +9,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=TagRepository::class)
@@ -23,6 +24,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *          "security_message"="Vous n'avez pas accès aux tags"
  *      },
  *      normalizationContext={"groups"={"tag_read"}},
+ *      denormalizationContext={"groups"={"tag_write"}},
  *      collectionOperations={
  *          "get_tags"={
  *              "method"="GET",
@@ -47,18 +49,21 @@ class Tag
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"grptag_write", "tag_write"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"grptag_read", "tag_read"})
+     * @Assert\NotBlank(message="Le libellé ne doit pas être vide.")
+     * @Groups({"grptag_read", "grptag_write", "tag_read", "tag_write"})
      */
     private $libelle;
-
+    
     /**
      * @ORM\Column(type="text")
-     * @Groups({"grptag_read", "tag_read"})
+     * @Assert\NotBlank(message="Le descriptif ne doit pas être vide.")
+     * @Groups({"grptag_read", "grptag_write", "tag_read", "tag_write"})
      */
     private $descriptif;
 
@@ -69,7 +74,7 @@ class Tag
 
     /**
      * @ORM\ManyToMany(targetEntity=GroupeTag::class, mappedBy="tags")
-     * @Groups({"tag_read"})
+     * @Groups({"tag_read", "tag_write"})
      */
     private $groupeTags;
 

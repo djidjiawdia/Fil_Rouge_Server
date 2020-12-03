@@ -7,8 +7,9 @@ use App\Repository\CompetenceRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=CompetenceRepository::class)
@@ -18,6 +19,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * )
  * @ApiResource(
  *      routePrefix="/admin",
+ *      normalizationContext={"groups"={"comp_read"}},
+ *      denormalizationContext={"groups"={"comp_write"}},
  *      collectionOperations={
  *          "get_competences"={
  *              "method"="GET",
@@ -25,13 +28,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "security_message"="Vous n'avez pas accès à cette ressource."
  *          },
  *          "create_competence"={
- *              "method"="POST",
- *              "deserialize"=false
+ *              "method"="POST"
  *          }
  *      },
  *      itemOperations={
  *          "get_competence"={
  *              "method"="GET",
+ *              "security"="is_granted('COMPETENCE_VIEW', object)",
+ *              "security_message"="Vous n'avez pas accès à cette ressource."
  *          },
  *          "update_competence"={
  *              "method"="PUT",
@@ -45,12 +49,14 @@ class Competence
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"grpe_comp_write", "comp_write"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le libellé ne doit pas être vide."))
+     * @Groups({"grpe_comp_read", "grpe_comp_write", "comp_write", "comp_read"})
      */
     private $libelle;
 
@@ -62,20 +68,19 @@ class Competence
      *      max=3,
      *      exactMessage="Vous devrez avoir exactement {{ limit }} niveaux"
      * )
+     * @Groups({"grpe_comp_write", "comp_write", "comp_read"})
      */
     private $niveaux;
 
     /**
      * @ORM\ManyToMany(targetEntity=GroupeCompetence::class, mappedBy="competences", cascade={"persist"})
-     * @Assert\Count(
-     *      min=1,
-     *      minMessage="Affecter au moins un groupe de competences"
-     * )
+     * @Groups({"comp_write"})
      */
     private $groupeCompetences;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"comp_write"})
      */
     private $isDeleted;
 

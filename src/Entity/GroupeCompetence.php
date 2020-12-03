@@ -3,13 +3,14 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\GroupeCompetenceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=GroupeCompetenceRepository::class)
@@ -19,7 +20,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * )
  * @ApiResource(
  *      routePrefix="/admin",
- *      normalizationContext={"groups"={"groupecompetence_read"}},
+ *      normalizationContext={"groups"={"grpe_comp_read"}},
+ *      denormalizationContext={"groups"={"grpe_comp_write"}},
  *      collectionOperations={
  *          "get_grpecompetences"={
  *              "method"="GET",
@@ -27,14 +29,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "get_grpecompetences_competences"={
  *              "method"="GET",
- *              "path"="grpecompetences/competences",
+ *              "path"="/grpecompetences/competences",
  *              "security"="is_granted('VIEW_GRPECOMPETENCE', object)",
  *              "security_message"="Vous n'avez pas accès à cette ressource"
  *          },
  *          "create_grpecompetence"={
  *              "method"="POST",
- *              "path"="grpecompetences",
- *              "deserialize"=false
+ *              "path"="/grpecompetences"
  *          }
  *      },
  *      itemOperations={
@@ -63,42 +64,52 @@ class GroupeCompetence
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"grpe_comp_write", "comp_write"})
      */
     private $id;
     
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"groupecompetence_read"})
      * @Assert\NotBlank(message="Le libellé ne doit pas être vide.")
+     * @Groups({"grpe_comp_read", "grpe_comp_write"})
      */
     private $libelle;
     
     /**
      * @ORM\Column(type="text")
-     * @Groups({"groupecompetence_read"})
      * @Assert\NotBlank(message="Le descriptif ne doit pas être vide.")
+     * @Groups({"grpe_comp_read", "grpe_comp_write"})
      */
     private $descriptif;
     
     /**
      * @ORM\ManyToMany(targetEntity=Competence::class, inversedBy="groupeCompetences", cascade={"persist"})
+     * @JoinColumn(name="competence_id", nullable=true)
      * @Assert\Valid
      * @Assert\Count(
      *      min=1,
      *      minMessage="Affecter au moins une competence"
      * )
+     * @Groups({"grpe_comp_read", "grpe_comp_write"})
      */
     private $competences;
     
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"grpe_comp_write"})
      */
     private $isDeleted;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Referentiel::class, mappedBy="groupeCompetences")
+     */
+    private $referentiels;
 
     public function __construct()
     {
         $this->competences = new ArrayCollection();
         $this->isDeleted = false;
+        $this->referentiels = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -162,6 +173,33 @@ class GroupeCompetence
     public function setIsDeleted(bool $isDeleted): self
     {
         $this->isDeleted = $isDeleted;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Referentiel[]
+     */
+    public function getReferentiels(): Collection
+    {
+        return $this->referentiels;
+    }
+
+    public function addReferentiel(Referentiel $referentiel): self
+    {
+        if (!$this->referentiels->contains($referentiel)) {
+            $this->referentiels[] = $referentiel;
+            $referentiel->addGroupeCompetence($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReferentiel(Referentiel $referentiel): self
+    {
+        if ($this->referentiels->removeElement($referentiel)) {
+            $referentiel->removeGroupeCompetence($this);
+        }
 
         return $this;
     }

@@ -9,6 +9,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=GroupeTagRepository::class)
@@ -23,6 +24,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *          "security_message"="Vous n'avez pas accès aux tags"
  *      },
  *      normalizationContext={"groups"={"grptag_read"}},
+ *      denormalizationContext={"groups"={"grptag_write"}},
  *      collectionOperations={
  *          "get_grptags"={
  *              "method"="GET",
@@ -30,8 +32,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *          },
  *          "add_grptag"={
  *              "method"="POST",
- *              "path"="grptags",
- *              "deserialize"=false
+ *              "path"="/grptags"
  *          }
  *      },
  *      itemOperations={
@@ -41,7 +42,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *          },
  *          "update_grptag"={
  *              "method"="PUT",
- *              "path"="grptags/{id}"
+ *              "path"="/grptags/{id}"
  *          }
  *      }
  * )
@@ -52,18 +53,25 @@ class GroupeTag
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"grptag_write", "tag_write"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"grptag_read", "tag_read"})
+     * @Assert\NotBlank(message="Le libellé ne doit pas être vide")
+     * @Groups({"grptag_read", "grptag_write", "tag_read"})
      */
     private $libelle;
     
     /**
      * @ORM\ManyToMany(targetEntity=Tag::class, inversedBy="groupeTags", cascade={"persist"})
-     * @Groups({"grptag_read"})
+     * @Assert\Valid
+     * @Assert\Count(
+     *      min=2,
+     *      minMessage="Vous devrez avoir au moins {{ limit }} tags"
+     * )
+     * @Groups({"grptag_read", "grptag_write"})
      */
     private $tags;
 

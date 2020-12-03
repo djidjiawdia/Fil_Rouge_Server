@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\NiveauRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\NiveauRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -15,22 +16,26 @@ class Niveau
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"comp_write", "comp_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le libellé ne doit pas être vide."))
+     * @Groups({"grpe_comp_write", "comp_write", "comp_read"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"grpe_comp_write", "comp_write", "comp_read"})
      */
     private $critereEvaluation;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"grpe_comp_write", "comp_write", "comp_read"})
      */
     private $groupeAction;
 
