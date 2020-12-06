@@ -49,14 +49,20 @@ class Competence
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"grpe_comp_write", "comp_write"})
+     * @Groups({"grpe_comp_write", "comp_write", "ref_grp_comp"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le libellé ne doit pas être vide."))
-     * @Groups({"grpe_comp_read", "grpe_comp_write", "comp_write", "comp_read"})
+     * @Groups({
+     *      "grpe_comp_read",
+     *      "grpe_comp_write",
+     *      "comp_write",
+     *      "comp_read",
+     *      "ref_grp_comp"
+     * })
      */
     private $libelle;
 
@@ -68,7 +74,7 @@ class Competence
      *      max=3,
      *      exactMessage="Vous devrez avoir exactement {{ limit }} niveaux"
      * )
-     * @Groups({"grpe_comp_write", "comp_write", "comp_read"})
+     * @Groups({"grpe_comp_write", "comp_write", "comp_read", "ref_grp_comp"})
      */
     private $niveaux;
 

@@ -26,6 +26,7 @@ final class UploadService
                 $data[$key] = end($attr);
             }
         }
+        dd($data);
         return $data;
     }
 

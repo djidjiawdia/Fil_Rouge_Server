@@ -10,6 +10,11 @@ use Faker;
 
 class GroupeCompetenceFixtures extends Fixture implements DependentFixtureInterface
 {
+    public static function getRefKey($i)
+    {
+        return sprintf("grpc_%s", $i);
+    }
+    
     public function load(ObjectManager $manager)
     {
         $f = Faker\Factory::create();
@@ -25,6 +30,7 @@ class GroupeCompetenceFixtures extends Fixture implements DependentFixtureInterf
             }
 
             $manager->persist($grc);
+            $this->addReference(self::getRefKey($i), $grc);
         }
 
         $manager->flush();

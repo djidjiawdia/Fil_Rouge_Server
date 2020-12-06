@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\GroupeCompetenceRepository;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -22,6 +23,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      routePrefix="/admin",
  *      normalizationContext={"groups"={"grpe_comp_read"}},
  *      denormalizationContext={"groups"={"grpe_comp_write"}},
+ *      subresourceOperations={
+ *          "competences_get_subresource"={
+ *              "path"="admin/grpecompetence/{id}/competences"
+ *          }
+ *      },
  *      collectionOperations={
  *          "get_grpecompetences"={
  *              "method"="GET",
@@ -45,10 +51,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *              "security"="is_granted('VIEW_GRPECOMPETENCE', object)",
  *              "security_message"="Vous n'avez pas accès à cette ressource"
  *          },
- *          "get_grpecompetence_competences"={
- *              "method"="GET",
- *              "path"="/grpecompetence/{id}/competences"
- *          },
  *          "update_grpecompetence"={
  *              "method"="PUT",
  *              "path"="/grpecompetences/{id}",
@@ -64,21 +66,21 @@ class GroupeCompetence
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"grpe_comp_write", "comp_write"})
+     * @Groups({"grpe_comp_write", "comp_write", "ref_write", "ref_grp_comp"})
      */
     private $id;
     
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le libellé ne doit pas être vide.")
-     * @Groups({"grpe_comp_read", "grpe_comp_write"})
+     * @Groups({"grpe_comp_read", "grpe_comp_write", "ref_grp_comp"})
      */
     private $libelle;
     
     /**
      * @ORM\Column(type="text")
      * @Assert\NotBlank(message="Le descriptif ne doit pas être vide.")
-     * @Groups({"grpe_comp_read", "grpe_comp_write"})
+     * @Groups({"grpe_comp_read", "grpe_comp_write", "ref_grp_comp"})
      */
     private $descriptif;
     
@@ -90,7 +92,8 @@ class GroupeCompetence
      *      min=1,
      *      minMessage="Affecter au moins une competence"
      * )
-     * @Groups({"grpe_comp_read", "grpe_comp_write"})
+     * @ApiSubresource
+     * @Groups({"grpe_comp_read", "grpe_comp_write", "ref_grp_comp"})
      */
     private $competences;
     

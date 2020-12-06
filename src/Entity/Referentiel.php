@@ -2,13 +2,65 @@
 
 namespace App\Entity;
 
-use App\Repository\ReferentielRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ReferentielRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=ReferentielRepository::class)
+ * @UniqueEntity(
+ *      fields={"libelle"},
+ *      message="Le libelle est déjà utilisé"
+ * )
+ * @ApiResource(
+ *      routePrefix="admin",
+ *      normalizationContext={"groups"={"ref_read"}},
+ *      denormalizationContext={"groups"={"ref_write"}},
+ *      subresourceOperations={
+ *          "groupe_competences_competences_get_subresource"={
+ *              "path"="admin/referentiels/{id}/grpecompetences/{groupeCompetences}/competences",
+ *              "security"="is_granted('REF_VIEW', object)",
+ *              "security_message"="Vous n'avez pas accès à cette ressource"
+ *          }
+ *      },
+ *      collectionOperations={
+ *          "get_referentiels"={
+ *              "method"="GET",
+ *              "security"="is_granted('REF_VIEW', object)",
+ *              "security_message"="Vous n'avez pas accès à cette ressource"
+ *          },
+ *          "get_referentiels_grpcompetences"={
+ *              "method"="GET",
+ *              "path"="/referentiels/grpecompetences",
+ *              "normalization_context"={"groups"={"ref_grp_comp"}},
+ *              "security"="is_granted('REF_VIEW', object)",
+ *              "security_message"="Vous n'avez pas accès à cette ressource"
+ *          },
+ *          "add_referentiel"={
+ *              "method"="POST",
+ *              "security"="is_granted('REF_CREATE', object)",
+ *              "security_message"="Vous n'avez pas accès à cette ressource"
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get_referentiel"={
+ *              "method"="GET",
+ *              "security"="is_granted('REF_VIEW', object)",
+ *              "security_message"="Vous n'avez pas accès à cette ressource"
+ *          },
+ *          "update_referentiel"={
+ *              "method"="PUT",
+ *              "security"="is_granted('REF_EDIT', object)",
+ *              "security_message"="Vous n'avez pas accès à cette ressource"
+ *          }
+ *      }
+ * )
  */
 class Referentiel
 {
@@ -16,36 +68,47 @@ class Referentiel
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"ref_write", "ref_read"})
      */
     private $id;
-
+    
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le libellé ne doit pas être vide")
+     * @Groups({"ref_write", "ref_read"})
      */
     private $libelle;
-
+    
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank(message="La presentation ne doit pas être vide")
+     * @Groups({"ref_write", "ref_read"})
      */
     private $presentation;
 
     /**
      * @ORM\Column(type="blob", nullable=true)
+     * @Groups({"ref_write", "ref_read"})
      */
     private $programme;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"ref_write", "ref_read"})
      */
     private $critereEvaluation;
-
+    
     /**
      * @ORM\Column(type="text")
+     * @Groups({"ref_write", "ref_read"})
      */
     private $critereAdmission;
 
     /**
      * @ORM\ManyToMany(targetEntity=GroupeCompetence::class, inversedBy="referentiels")
+     * @Assert\Valid
+     * @ApiSubresource()
+     * @Groups({"ref_write", "ref_grp_comp"})
      */
     private $groupeCompetences;
 
@@ -97,7 +160,10 @@ class Referentiel
 
     public function getProgramme()
     {
-        return $this->programme;
+        if($this->programme != null){
+            return \base64_encode(stream_get_contents($this->programme));
+        }
+        return null;
     }
 
     public function setProgramme($programme): self
