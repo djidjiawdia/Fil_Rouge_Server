@@ -6,6 +6,10 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInter
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use Doctrine\ORM\QueryBuilder;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use App\Entity\Apprenant;
+use App\Entity\CommunityManager;
+use App\Entity\Competence;
+use App\Entity\Formateur;
 use App\Entity\Profil;
 use App\Entity\User;
 
@@ -15,7 +19,11 @@ class FilterQueryExtension implements QueryCollectionExtensionInterface
     {
         if (
             User::class === $resourceClass ||
-            Profil::class === $resourceClass
+            Apprenant::class === $resourceClass ||
+            Formateur::class === $resourceClass ||
+            CommunityManager::class === $resourceClass ||
+            Profil::class === $resourceClass ||
+            Competence::class === $resourceClass
         ) {
             $queryBuilder->andWhere(sprintf("%s.isDeleted = false",
             $queryBuilder->getRootAliases()[0]));

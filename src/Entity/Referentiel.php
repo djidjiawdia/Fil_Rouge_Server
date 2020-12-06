@@ -68,7 +68,7 @@ class Referentiel
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"ref_write", "ref_read"})
+     * @Groups({"ref_write", "ref_read", "promo_write"})
      */
     private $id;
     

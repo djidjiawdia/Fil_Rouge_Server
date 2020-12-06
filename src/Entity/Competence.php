@@ -4,11 +4,13 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\CompetenceRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
@@ -17,6 +19,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      fields={"libelle"},
  *      message="Le libelle est déjà utilisé"
  * )
+ * @ApiFilter(BooleanFilter::class, properties={"isDeleted"})
  * @ApiResource(
  *      routePrefix="/admin",
  *      normalizationContext={"groups"={"comp_read"}},
@@ -28,7 +31,9 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *              "security_message"="Vous n'avez pas accès à cette ressource."
  *          },
  *          "create_competence"={
- *              "method"="POST"
+ *              "method"="POST",
+ *              "security"="is_granted('ROLE_ADMIN')",
+ *              "security_message"="Vous n'avez pas accès à cette ressource."
  *          }
  *      },
  *      itemOperations={
@@ -39,6 +44,13 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *          },
  *          "update_competence"={
  *              "method"="PUT",
+ *              "security"="is_granted('ROLE_ADMIN')",
+ *              "security_message"="Vous n'avez pas accès à cette ressource."
+ *          },
+ *          "delete_competence"={
+ *              "method"="DELETE",
+ *              "security"="is_granted('ROLE_ADMIN')",
+ *              "security_message"="Vous n'avez pas accès à cette ressource."
  *          }
  *      },
  * )

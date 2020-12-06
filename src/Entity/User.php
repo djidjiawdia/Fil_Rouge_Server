@@ -61,7 +61,7 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"user_read", "profil_read_user"})
+     * @Groups({"user_read", "profil_read_user", "promo_write"})
      */
     protected $id;
 
@@ -69,7 +69,7 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=180, unique=true)
      * @Assert\NotBlank(message="L'email ne doit pas être vide.")
      * @Assert\Email(message = "L'email '{{ value }}' n'est pas valid.")
-     * @Groups({"user_read"})
+     * @Groups({"user_read", "promo_write"})
      */
     protected $email;
 
@@ -82,13 +82,13 @@ class User implements UserInterface
     protected $password;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"user_read", "profil_read_user"})
      */
     protected $prenom;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"user_read", "profil_read_user"})
      */
     protected $nom;

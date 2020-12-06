@@ -2,10 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\GroupeRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\GroupeRepository;
+use DateTime;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=GroupeRepository::class)
@@ -16,11 +19,14 @@ class Groupe
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"promo_write"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le nom ne doit pas être vide")
+     * @Groups({"promo_write"})
      */
     private $nom;
 
@@ -31,6 +37,7 @@ class Groupe
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le type ne doit pas être vide")
      */
     private $type;
 
@@ -45,7 +52,8 @@ class Groupe
     private $formateurs;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Apprenant::class, inversedBy="groupes")
+     * @ORM\ManyToMany(targetEntity=Apprenant::class, inversedBy="groupes", cascade={"persist"})
+     * @Groups({"promo_write"})
      */
     private $apprenants;
 
@@ -63,7 +71,9 @@ class Groupe
     {
         $this->formateurs = new ArrayCollection();
         $this->apprenants = new ArrayCollection();
+        $this->dateCreation = new DateTime();
         $this->isDeleted = false;
+        $this->statut = true;
     }
 
     public function getId(): ?int

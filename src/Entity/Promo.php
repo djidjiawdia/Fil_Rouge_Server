@@ -5,11 +5,113 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PromoRepository;
 use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PromoRepository::class)
+ * @ApiResource( 
+ *      routePrefix="admin/",
+ *      normalizationContext={"groups"={"promo_read"}},
+ *      denormalizationContext={"groups"={"promo_write"}},
+ *      collectionOperations={
+ *         "get_promos"={
+ *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
+ *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "method"="GET"
+ *          },
+ *          "get_promos_principal"={
+ *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
+ *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "normalization_context"={"groups"={"promo_groupe_principal_read"}},
+ *              "method"="GET", 
+ *              "path"="/promos/principal"
+ *          },
+ *          "get_promos_apprenant"={
+ *              "security"="(is_granted('ROLE_FORMATEUR'))",
+ *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "method"="GET", 
+ *              "path"="/promos/apprenants/attente"
+ *          },
+ *           "add_promo"={
+ *              "method"="POST",
+ *              "deserialize"=false
+ *          },
+ * 
+ *      },
+ *      itemOperations={
+ *          "get_promo"={
+ *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
+ *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "method"="GET"
+ *          },
+ *          "get_promo_principale"={
+ *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
+ *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "normalization_context"={"groups"={"promo_groupe_principal_read"}},
+ *              "method"="GET", 
+ *              "path"="/promos/{id}/principale"
+ *          },
+ *           "get_promo_referentiel"={
+ *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
+ *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "normalization_context"={"groups"={"promo_referentiel_read"}},
+ *              "method"="GET",
+ *              "path"="/promos/{id}/referentiels"
+ *          },
+ *          "get_promo_apprenant"={
+ *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
+ *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "method"="GET", 
+ *              "path"="/promos/{id}/apprenants/attente"
+ *          },
+ *          "get_promo_groupe"={
+ *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
+ *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "normalization_context"={"groups"={"promo_apprenant_read"}},
+ *              "method"="GET", 
+ *              "path"="/promos/{id}/groupes/{ida}/apprenants"
+ *          },
+ *          "get_promo_formateur"={
+ *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
+ *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "normalization_context"={"groups"={"promo_formateur_read"}},
+ *              "method"="GET", 
+ *              "path"="/promos/{id}/formateurs"
+ *          },
+ *          "update_promo"={
+ *              "security"="(is_granted('ROLE_FORMATEUR'))",
+ *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "method"="PUT"
+ *          },
+ *          "update_promo_apprenant"={
+ *              "security"="(is_granted('ROLE_FORMATEUR'))",
+ *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "method"="PUT", 
+ *              "path"="/promos/{id}/apprenants"
+ *          },
+ *          "update_promo_formateur"={
+ *              "security"="(is_granted('ROLE_FORMATEUR'))",
+ *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "method"="PUT", 
+ *              "path"="/promos/{id}/formateurs"
+ *          },
+ *           "ajouter_promo_groupe"={
+ *              "security"="(is_granted('ROLE_FORMATEUR'))",
+ *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "method"="PUT", 
+ *              "path"="/promos/{id}/groupes",
+ *          },
+ *           "update_promo_groupe"={
+ *              "security"="(is_granted('ROLE_FORMATEUR'))",
+ *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "method"="PUT", 
+ *              "path"="/promos/{id}/groupes/{idgrpe}",
+ *          },
+ *      }
+ * )
  */
 class Promo
 {
@@ -17,22 +119,28 @@ class Promo
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"ref_write"})
+     * @Groups({"ref_write", "promo_write"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="La langue ne doit pas être vide")
+     * @Groups({"promo_write"})
      */
     private $langue;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le titre ne doit pas être vide")
+     * @Groups({"promo_write"})
      */
     private $titre;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank(message="La description ne doit pas être vide")
+     * @Groups({"promo_write"})
      */
     private $description;
 
@@ -43,11 +151,15 @@ class Promo
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\NotBlank(message="La date de début ne doit pas être vide")
+     * @Groups({"promo_write"})
      */
     private $dateDebut;
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\NotBlank(message="La date de début ne doit pas être vide")
+     * @Groups({"promo_write"})
      */
     private $dateProvisoire;
 
@@ -63,11 +175,20 @@ class Promo
 
     /**
      * @ORM\ManyToOne(targetEntity=Referentiel::class, inversedBy="promos")
+     * @Assert\Valid
+     * @Assert\NotNull(message="Le referentiel est obligatoire")
+     * @Groups({"promo_write"})
      */
     private $referentiel;
 
     /**
      * @ORM\ManyToMany(targetEntity=Formateur::class, inversedBy="promos")
+     * @Assert\Valid
+     * @Assert\Count(
+     *      min=1,
+     *      minMessage="Affecter au moins un formateur"
+     * )
+     * @Groups({"promo_write"})
      */
     private $formateurs;
 
@@ -83,7 +204,13 @@ class Promo
     private $isDeleted;
 
     /**
-     * @ORM\OneToMany(targetEntity=Groupe::class, mappedBy="promo")
+     * @ORM\OneToMany(targetEntity=Groupe::class, mappedBy="promo", cascade={"persist"})
+     * @Assert\Valid
+     * @Assert\Count(
+     *      min=1,
+     *      minMessage="Ajouter le groupe principal"
+     * )
+     * @Groups({"promo_write"})
      */
     private $groupes;
 
@@ -92,6 +219,7 @@ class Promo
         $this->formateurs = new ArrayCollection();
         $this->groupes = new ArrayCollection();
         $this->isDeleted = false;
+        $this->fabrique = "Sonatel Academy";
     }
 
     public function getId(): ?int
