@@ -16,13 +16,13 @@ class Niveau
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"comp_write", "comp_read", "ref_grp_comp"})
+     * @Groups({"comp_read", "ref_grp_comp"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Le libellé ne doit pas être vide."))
+     * @Assert\NotBlank(message="Le libellé du niveau ne doit pas être vide."))
      * @Groups({"grpe_comp_write", "comp_write", "comp_read", "ref_grp_comp"})
      */
     private $libelle;

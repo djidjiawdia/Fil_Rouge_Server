@@ -10,7 +10,17 @@ class ProfilSortieFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
-        $ps = ["Développeur Front", "Back", "Fullstack", "CMS", "Intégrateur", "Designer"];
+        $ps = [
+            "Développeur Front",
+            "Développeur Back",
+            "Développeur Fullstack",
+            "Référent Digital",
+            "Intégrateur web",
+            "Designer web",
+            "Data scientist",
+            "IOT",
+            "Community Manager"
+        ];
 
         foreach($ps as $libelle) {
             $profilSortie = new ProfilSortie();

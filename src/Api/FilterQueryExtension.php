@@ -11,6 +11,7 @@ use App\Entity\CommunityManager;
 use App\Entity\Competence;
 use App\Entity\Formateur;
 use App\Entity\Profil;
+use App\Entity\ProfilSortie;
 use App\Entity\User;
 
 class FilterQueryExtension implements QueryCollectionExtensionInterface
@@ -23,6 +24,7 @@ class FilterQueryExtension implements QueryCollectionExtensionInterface
             Formateur::class === $resourceClass ||
             CommunityManager::class === $resourceClass ||
             Profil::class === $resourceClass ||
+            ProfilSortie::class === $resourceClass ||
             Competence::class === $resourceClass
         ) {
             $queryBuilder->andWhere(sprintf("%s.isDeleted = false",

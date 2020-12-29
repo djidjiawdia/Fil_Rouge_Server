@@ -67,14 +67,18 @@ class Profil
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"profil_read"})
+     * @Groups({
+     *      "profil_read",
+     *      "user_read",
+     *      "user_write"
+     * })
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le libellé ne doit pas être vide!")
-     * @Groups({"profil_read", "user_read_all"})
+     * @Groups({"profil_read", "user_read", "promo_read", "promo_principal_read"})
      */
     private $libelle;
 

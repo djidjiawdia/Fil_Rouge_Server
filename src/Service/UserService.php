@@ -34,12 +34,21 @@ class UserService
         $this->validator = $validator;
     }
 
-    public function createUser(Request $req, string $attr, string $type = User::class)
+    public function createUser(Request $req)
     {
         $userTab = $req->request->all();
         $userTab["avatar"] = fopen(($req->files->get("avatar")), "rb");
-        $profil = $this->profilRepo->findOneBy(["libelle" => $attr]);
-        if($profil && !$profil->getIsDeleted()){
+        // dd($req->files->get("avatar"));
+        $profil = $this->profilRepo->find($userTab['profil']);
+        if($profil && !$profil->getIsDeleted() && $profil->getLibelle() !== 'apprenant'){
+            $type = 'App\Entity\User';
+            if($profil->getLibelle() === 'cm'){
+                $type = 'App\Entity\CommunityManager';
+            }elseif($profil->getLibelle() === 'formateur'){
+                $type = 'App\Entity\Formateur';
+            }
+            unset($userTab["profil"]);
+            // dd($userTab);
             $user = $this->denormalizer->denormalize($userTab, $type);
             $user
                 ->setProfil($profil)
@@ -47,7 +56,7 @@ class UserService
         }else{
             return new JsonResponse(["message" => "Le profil est introuvable"], Response::HTTP_BAD_REQUEST);
         }
-        
+        // dd($user);
         $errors = $this->validator->validate($user);
         if($errors){
             return new JsonResponse($errors, Response::HTTP_BAD_REQUEST);
@@ -59,9 +68,11 @@ class UserService
     public function updateUser($user, array $data)
     {
         foreach($data as $key => $value) {
-            $method = 'set'.ucfirst($key);
-            if(method_exists($user, $method)) {
-                $user->{$method}($value);
+            if($key !== 'profil') {
+                $method = 'set'.ucfirst($key);
+                if(method_exists($user, $method)) {
+                    $user->{$method}($value);
+                }
             }
         }
 
@@ -72,4 +83,5 @@ class UserService
 
         return $user;
     }
+
 }

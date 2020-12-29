@@ -9,9 +9,14 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=PromoRepository::class)
+ * @UniqueEntity(
+ *      fields={"titre"},
+ *      message="Le titre est déjà utilisé"
+ * )
  * @ApiResource( 
  *      routePrefix="admin/",
  *      normalizationContext={"groups"={"promo_read"}},
@@ -25,7 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "get_promos_principal"={
  *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
  *              "security_message"="Vous n'avez pas access à cette Ressource",
- *              "normalization_context"={"groups"={"promo_groupe_principal_read"}},
+ *              "normalization_context"={"groups"={"promo_principal_read"}},
  *              "method"="GET", 
  *              "path"="/promos/principal"
  *          },
@@ -47,12 +52,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "security_message"="Vous n'avez pas access à cette Ressource",
  *              "method"="GET"
  *          },
- *          "get_promo_principale"={
+ *          "get_promo_principal"={
  *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
  *              "security_message"="Vous n'avez pas access à cette Ressource",
- *              "normalization_context"={"groups"={"promo_groupe_principal_read"}},
+ *              "normalization_context"={"groups"={"promo_principal_read"}},
  *              "method"="GET", 
- *              "path"="/promos/{id}/principale"
+ *              "path"="/promos/{id}/principal"
  *          },
  *           "get_promo_referentiel"={
  *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
@@ -119,28 +124,34 @@ class Promo
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"ref_write", "promo_write"})
+     * @Groups({
+     *      "ref_write",
+     *      "promo_write",
+     *      "promo_read",
+     *      "promo_principal_read",
+     *      "groupe_write"
+     * })
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="La langue ne doit pas être vide")
-     * @Groups({"promo_write"})
+     * @Groups({"promo_write", "promo_read"})
      */
     private $langue;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le titre ne doit pas être vide")
-     * @Groups({"promo_write"})
+     * @Groups({"promo_write", "promo_read", "promo_principal_read", "groupe_read"})
      */
     private $titre;
 
     /**
      * @ORM\Column(type="text")
      * @Assert\NotBlank(message="La description ne doit pas être vide")
-     * @Groups({"promo_write"})
+     * @Groups({"promo_write", "promo_read"})
      */
     private $description;
 
@@ -152,14 +163,14 @@ class Promo
     /**
      * @ORM\Column(type="date")
      * @Assert\NotBlank(message="La date de début ne doit pas être vide")
-     * @Groups({"promo_write"})
+     * @Groups({"promo_write", "promo_read"})
      */
     private $dateDebut;
 
     /**
      * @ORM\Column(type="date")
      * @Assert\NotBlank(message="La date de début ne doit pas être vide")
-     * @Groups({"promo_write"})
+     * @Groups({"promo_write", "promo_read"})
      */
     private $dateProvisoire;
 
@@ -170,14 +181,14 @@ class Promo
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"promo_read"})
      */
     private $fabrique;
 
     /**
      * @ORM\ManyToOne(targetEntity=Referentiel::class, inversedBy="promos")
-     * @Assert\Valid
      * @Assert\NotNull(message="Le referentiel est obligatoire")
-     * @Groups({"promo_write"})
+     * @Groups({"promo_write", "promo_read", "promo_principal_read"})
      */
     private $referentiel;
 
@@ -188,7 +199,7 @@ class Promo
      *      min=1,
      *      minMessage="Affecter au moins un formateur"
      * )
-     * @Groups({"promo_write"})
+     * @Groups({"promo_write", "promo_read", "promo_principal_read"})
      */
     private $formateurs;
 
@@ -210,7 +221,7 @@ class Promo
      *      min=1,
      *      minMessage="Ajouter le groupe principal"
      * )
-     * @Groups({"promo_write"})
+     * @Groups({"promo_write", "promo_read", "promo_principal_read"})
      */
     private $groupes;
 

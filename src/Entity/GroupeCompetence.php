@@ -66,7 +66,7 @@ class GroupeCompetence
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"grpe_comp_write", "comp_write", "ref_write", "ref_grp_comp"})
+     * @Groups({"grpe_comp_read", "comp_write", "grpe_comp_write", "ref_write", "ref_grp_comp"})
      */
     private $id;
     
@@ -99,7 +99,6 @@ class GroupeCompetence
     
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"grpe_comp_write"})
      */
     private $isDeleted;
 

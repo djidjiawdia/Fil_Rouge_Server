@@ -2,16 +2,36 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\GroupeRepository;
-use DateTime;
 use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=GroupeRepository::class)
+ * @ApiResource(
+ *      routePrefix="admin/",
+ *      attributes={
+ *          "security"="is_granted('ROLE_FORMATEUR')",
+ *          "security_message"= "Vous n'avez pas acces à cette ressource"
+ *      },
+ *      normalizationContext={"groups"={"groupe_read"}},
+ *      denormalizationContext={"groups"={"groupe_write"}},
+ *      collectionOperations={
+ *          "GET",
+ *          "get_apprenant"={
+ *              "method"="GET",
+ *              "path"="/groupes/apprenants",
+ *              "normalization_context"={"groups"={"groupe_app_read"}}
+ *          },
+ *          "POST"
+ *      },
+ *      itemOperations={"GET", "PUT"}
+ * )
  */
 class Groupe
 {
@@ -19,14 +39,14 @@ class Groupe
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"promo_write"})
+     * @Groups({"promo_write", "promo_read", "groupe_write"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le nom ne doit pas être vide")
-     * @Groups({"promo_write"})
+     * @Groups({"promo_write", "promo_read", "groupe_read", "groupe_write"})
      */
     private $nom;
 
@@ -38,22 +58,25 @@ class Groupe
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le type ne doit pas être vide")
+     * @Groups({"promo_read", "groupe_read"})
      */
     private $type;
 
     /**
      * @ORM\ManyToOne(targetEntity=Promo::class, inversedBy="groupes")
+     * @Groups({"groupe_read", "groupe_write"})
      */
     private $promo;
 
     /**
      * @ORM\ManyToMany(targetEntity=Formateur::class, inversedBy="groupes")
+     * @Groups({"groupe_read", "groupe_write"})
      */
     private $formateurs;
 
     /**
      * @ORM\ManyToMany(targetEntity=Apprenant::class, inversedBy="groupes", cascade={"persist"})
-     * @Groups({"promo_write"})
+     * @Groups({"promo_write", "promo_principal_read", "groupe_app_read", "groupe_write"})
      */
     private $apprenants;
 

@@ -33,7 +33,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *          "create_competence"={
  *              "method"="POST",
  *              "security"="is_granted('ROLE_ADMIN')",
- *              "security_message"="Vous n'avez pas accès à cette ressource."
+ *              "security_message"="Vous n'avez pas accès à cette ressource.",
  *          }
  *      },
  *      itemOperations={
@@ -61,13 +61,13 @@ class Competence
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"grpe_comp_write", "comp_write", "ref_grp_comp"})
+     * @Groups({"grpe_comp_write", "comp_read", "comp_write", "ref_grp_comp"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Le libellé ne doit pas être vide."))
+     * @Assert\NotBlank(message="Le libellé de le compétence ne doit pas être vide."))
      * @Groups({
      *      "grpe_comp_read",
      *      "grpe_comp_write",
@@ -98,7 +98,6 @@ class Competence
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"comp_write"})
      */
     private $isDeleted;
 

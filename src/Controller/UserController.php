@@ -57,12 +57,11 @@ class UserController extends AbstractController
      * )
      */
     public function createUser(Request $req) {
-        $user = $this->userService->createUser($req, self::$att_name);
+        $user = $this->userService->createUser($req);
         // dd($user);
         $this->em->persist($user);
         $this->em->flush();
-        
-        return $this->json($user, Response::HTTP_CREATED, [], ["groups" => "user_read"]);
+        return $this->json($user, Response::HTTP_CREATED, [], ["groups" => ["user_read"]]);
     }
 
     /**
@@ -81,7 +80,7 @@ class UserController extends AbstractController
     {
         $user = $userRepo->find($id);
         if($user && !$user->getIsDeleted()) {
-            $userTab = $this->uploadSer->getContentFromRequest($req, "avatar");
+            $userTab = $this->uploadSer->getContentFromReq($req, "avatar");
             // dd($userTab);
             $user = $this->userService->updateUser($user, $userTab);
             // dd($user);

@@ -25,12 +25,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ApiResource(
  *      routePrefix="/admin/users",
  *      attributes={
- *          "pagination_enabled"=true,
- *          "pagination_items_per_page"=3,
  *          "security"="is_granted('ROLE_ADMIN')",
  *          "security_message"="Vous n'avez accès à cette ressource"
  *      },
  *      normalizationContext={"groups"={"user_read"}},
+ *      denormalizationContext={"groups"={"user_write"}},
  *      collectionOperations={
  *           "get_users"={
  *               "method"="GET",
@@ -51,6 +50,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *              "method"="PUT",
  *              "path"="/{id}",
  *              "deserialize"=false
+ *          },
+ *          "delete_user"={
+ *              "method"="DELETE",
+ *              "path"="/{id}"
  *          }
  *      }
  * )
@@ -61,7 +64,13 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"user_read", "profil_read_user", "promo_write"})
+     * @Groups({
+     *      "user_read",
+     *      "user_write",
+     *      "profil_read_user",
+     *      "promo_write",
+     *      "groupe_write"
+     * })
      */
     protected $id;
 
@@ -69,7 +78,12 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=180, unique=true)
      * @Assert\NotBlank(message="L'email ne doit pas être vide.")
      * @Assert\Email(message = "L'email '{{ value }}' n'est pas valid.")
-     * @Groups({"user_read", "promo_write"})
+     * @Groups({
+     *      "user_read",
+     *      "user_write",
+     *      "promo_write",
+     *      "groupe_write"
+     * })
      */
     protected $email;
 
@@ -83,19 +97,35 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"user_read", "profil_read_user"})
+     * @Groups({
+     *      "user_read",
+     *      "user_write",
+     *      "profil_read_user",
+     *      "promo_read",
+     *      "promo_principal_read",
+     *      "groupe_read",
+     *      "groupe_app_read"
+     * })
      */
     protected $prenom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"user_read", "profil_read_user"})
+     * @Groups({
+     *      "user_read",
+     *      "user_write",
+     *      "profil_read_user",
+     *      "promo_read",
+     *      "promo_principal_read",
+     *      "groupe_read",
+     *      "groupe_app_read"
+     * })
      */
     protected $nom;
 
     /**
      * @ORM\Column(type="blob", nullable=true)
-     * @Groups({"user_read_all"})
+     * @Groups({"user_read", "user_write"})
      */
     protected $avatar;
 
@@ -114,7 +144,12 @@ class User implements UserInterface
     /**
      * @ORM\ManyToOne(targetEntity=Profil::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"user_read_all"})
+     * @Groups({
+     *      "user_read",
+     *      "user_write",
+     *      "promo_read",
+     *      "promo_principal_read"
+     * })
      */
     protected $profil;
 
