@@ -72,7 +72,6 @@
             "php bin/console doctrine:migrations:migrate --no-interaction"
         ],
         "compile": [
-            "php bin/console doctrine:migrations:migrate --no-interaction --env=prod",
             "php bin/console doctrine:fixtures:load --no-interaction --append"
         ],
         "auto-scripts": {
