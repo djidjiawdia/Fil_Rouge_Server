@@ -15,6 +15,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @ORM\Table("users")
  * @InheritanceType("JOINED")
  * @DiscriminatorColumn(name="type", type="string")
  * @DiscriminatorMap({"admin"="User", "formateur"="Formateur", "apprenant"="Apprenant", "cm"="CommunityManager"})
