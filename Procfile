@@ -1,2 +1,2 @@
 release: php bin/console cache:clear --env=prod
-web: heroku-php-apache2 public/
+web: vendor/bin/heroku-php-nginx -C heroku/nginx.conf public/
