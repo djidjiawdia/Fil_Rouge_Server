@@ -61,7 +61,7 @@ class Competence
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"grpe_comp_write", "comp_read", "comp_write", "ref_grp_comp"})
+     * @Groups({"grpe_comp_read", "grpe_comp_write", "comp_read", "comp_write", "ref_grp_comp"})
      */
     private $id;
 

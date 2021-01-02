@@ -21,6 +21,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * )
  * @ApiResource(
  *      routePrefix="/admin",
+ *      attributes={"pagination_enabled"=false},
  *      normalizationContext={"groups"={"grpe_comp_read"}},
  *      denormalizationContext={"groups"={"grpe_comp_write"}},
  *      subresourceOperations={
