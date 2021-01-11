@@ -19,6 +19,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * )
  * @ApiResource( 
  *      routePrefix="admin/",
+ *      attributes={"pagination_enabled"=false},
  *      normalizationContext={"groups"={"promo_read"}},
  *      denormalizationContext={"groups"={"promo_write"}},
  *      collectionOperations={
@@ -225,6 +226,12 @@ class Promo
      */
     private $groupes;
 
+    /**
+     * @ORM\Column(type="blob", nullable=true)
+     * @Groups({"promo_read", "promo_write"})
+     */
+    private $avatar;
+
     public function __construct()
     {
         $this->formateurs = new ArrayCollection();
@@ -420,6 +427,21 @@ class Promo
                 $groupe->setPromo(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAvatar()
+    {
+        if($this->avatar != null){
+            return \base64_encode(stream_get_contents($this->avatar));
+        }
+        return $this->avatar;
+    }
+
+    public function setAvatar($avatar): self
+    {
+        $this->avatar = $avatar;
 
         return $this;
     }

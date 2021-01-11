@@ -87,6 +87,11 @@ class PromoController extends AbstractController
     public function addPromo(Request $req, \Swift_Mailer $mailer, ProfilRepository $profilRepo)
     {
         $data = $req->request->all();
+        if(!empty($data["avatar"])){
+            $data["avatar"] = fopen(($req->files->get("avatar")), "rb");
+        }
+
+        $data["referentiel"] = json_decode($data['referentiel'], true);
         $data["formateurs"] = json_decode($data["formateurs"], true);
         $data["groupes"] = json_decode($data["groupes"], true);
 

@@ -37,8 +37,11 @@ class UserService
     public function createUser(Request $req)
     {
         $userTab = $req->request->all();
-        $userTab["avatar"] = fopen(($req->files->get("avatar")), "rb");
-        // dd($req->files->get("avatar"));
+        if($req->files->get("avatar")){
+            $userTab["avatar"] = fopen(($req->files->get("avatar")), "rb");
+            // dd($req->files->get("avatar"));
+        }
+        // dd($req);
         $profil = $this->profilRepo->find($userTab['profil']);
         if($profil && !$profil->getIsDeleted() && $profil->getLibelle() !== 'apprenant'){
             $type = 'App\Entity\User';

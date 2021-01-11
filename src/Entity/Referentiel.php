@@ -20,6 +20,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * )
  * @ApiResource(
  *      routePrefix="admin",
+ *      attributes={"pagination_enabled"=false},
  *      normalizationContext={"groups"={"ref_read"}},
  *      denormalizationContext={"groups"={"ref_write"}},
  *      subresourceOperations={
@@ -119,7 +120,7 @@ class Referentiel
      * @ORM\ManyToMany(targetEntity=GroupeCompetence::class, inversedBy="referentiels")
      * @Assert\Valid
      * @ApiSubresource()
-     * @Groups({"ref_write", "ref_grp_comp"})
+     * @Groups({"ref_write", "ref_read", "ref_grp_comp"})
      */
     private $groupeCompetences;
 
