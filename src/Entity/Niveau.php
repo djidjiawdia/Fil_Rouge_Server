@@ -16,26 +16,26 @@ class Niveau
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"comp_read", "ref_grp_comp"})
+     * @Groups({"comp_read", "ref_grp_comp", "grpe_comp_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le libellé du niveau ne doit pas être vide."))
-     * @Groups({"grpe_comp_write", "comp_write", "comp_read", "ref_grp_comp"})
+     * @Groups({"grpe_comp_read", "grpe_comp_write", "comp_write", "comp_read", "ref_grp_comp"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"grpe_comp_write", "comp_write", "comp_read", "ref_grp_comp"})
+     * @Groups({"grpe_comp_read", "grpe_comp_write", "comp_write", "comp_read", "ref_grp_comp"})
      */
     private $critereEvaluation;
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"grpe_comp_write", "comp_write", "comp_read", "ref_grp_comp"})
+     * @Groups({"grpe_comp_read", "grpe_comp_write", "comp_write", "comp_read", "ref_grp_comp"})
      */
     private $groupeAction;
 

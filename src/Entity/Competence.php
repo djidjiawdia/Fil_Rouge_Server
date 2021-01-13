@@ -86,7 +86,7 @@ class Competence
      *      max=3,
      *      exactMessage="Vous devrez avoir exactement {{ limit }} niveaux"
      * )
-     * @Groups({"grpe_comp_write", "comp_write", "comp_read", "ref_grp_comp"})
+     * @Groups({"grpe_comp_read", "grpe_comp_write", "comp_write", "comp_read", "ref_grp_comp"})
      */
     private $niveaux;
 
