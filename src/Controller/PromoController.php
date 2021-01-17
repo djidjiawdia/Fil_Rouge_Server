@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use ApiPlatform\Core\Validator\ValidatorInterface;
+use App\Entity\Apprenant;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -87,7 +88,7 @@ class PromoController extends AbstractController
     public function addPromo(Request $req, \Swift_Mailer $mailer, ProfilRepository $profilRepo)
     {
         $data = $req->request->all();
-        if(!empty($data["avatar"])){
+        if($req->files->get("avatar")){
             $data["avatar"] = fopen(($req->files->get("avatar")), "rb");
         }
 
@@ -104,6 +105,12 @@ class PromoController extends AbstractController
         }else {
             $promo->getGroupes()[0]->setType("principal");
             $profil = $profilRepo->findOneBy(["libelle" => "apprenant"]);
+            if($req->files->get("apprenants")) {
+                foreach($this->readCsv($req->files->get("apprenants")) as $app){
+                    $promo->getGroupes()[0]->addApprenant($app);
+                }
+            }
+            // dd($promo->getGroupes()[0]->getApprenants());
             foreach($promo->getGroupes()[0]->getApprenants() as $app){
                 $password = "test";
                 $app
@@ -118,6 +125,8 @@ class PromoController extends AbstractController
             }
             // dd($promo->getGroupes()[0]);
         }
+
+        // dd($promo->getGroupes()[0]->getApprenants());
 
         if(!$this->isGranted('PROMO_CREATE', $promo)){
             return $this->json([
@@ -180,5 +189,29 @@ class PromoController extends AbstractController
         }
 
         return $mdp;
+    }
+
+    private function readCsv($file) {
+        if(($fp = fopen($file, "r"))  !== false) {
+            $apps = [];
+            while (($rows = fgetcsv($fp, 1024)) !== false ) {
+                $tabApprenants[] = $rows;
+                // $line[] = ;
+            }
+            fclose($fp);
+            for ($j=1; $j<sizeof($tabApprenants); $j++) {
+                $apprenant = new Apprenant();
+                for ($i=0; $i<sizeof($tabApprenants[$j]); $i++) {
+                    $method = 'set'.ucfirst($tabApprenants[0][$i]);
+                    if (method_exists($apprenant, $method)) {
+                        $apprenant->{$method}($tabApprenants[$j][$i]);
+                    }
+                }
+                $apps[] = $apprenant;
+                // dump($apprenant);
+            }
+            // dd($tabApprenants);
+        }
+        return $apps;
     }
 }
