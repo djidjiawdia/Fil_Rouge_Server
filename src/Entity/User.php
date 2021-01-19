@@ -70,7 +70,8 @@ class User implements UserInterface
      *      "user_write",
      *      "profil_read_user",
      *      "promo_write",
-     *      "groupe_write"
+     *      "groupe_write",
+     *      "promo_principal_read"
      * })
      */
     protected $id;
@@ -83,7 +84,8 @@ class User implements UserInterface
      *      "user_read",
      *      "user_write",
      *      "promo_write",
-     *      "groupe_write"
+     *      "groupe_write",
+     *      "promo_principal_read"
      * })
      */
     protected $email;
