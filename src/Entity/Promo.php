@@ -44,7 +44,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *          },
  *           "add_promo"={
  *              "method"="POST",
- *              "method"="/promos",
  *              "deserialize"=false
  *          },
  * 
