@@ -26,6 +26,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *         "get_promos"={
  *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
  *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "path"="/promos",
  *              "method"="GET"
  *          },
  *          "get_promos_principal"={
@@ -43,6 +44,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *          },
  *           "add_promo"={
  *              "method"="POST",
+ *              "method"="/promos",
  *              "deserialize"=false
  *          },
  * 
