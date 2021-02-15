@@ -233,11 +233,18 @@ class Promo
      */
     private $avatar;
 
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"promo_read", "promo_write"})
+     */
+    private $statut;
+
     public function __construct()
     {
         $this->formateurs = new ArrayCollection();
         $this->groupes = new ArrayCollection();
         $this->isDeleted = false;
+        $this->statut = false;
         $this->fabrique = "Sonatel Academy";
     }
 
@@ -443,6 +450,18 @@ class Promo
     public function setAvatar($avatar): self
     {
         $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function getStatut(): ?bool
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(bool $statut): self
+    {
+        $this->statut = $statut;
 
         return $this;
     }

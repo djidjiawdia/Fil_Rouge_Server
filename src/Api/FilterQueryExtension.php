@@ -30,5 +30,10 @@ class FilterQueryExtension implements QueryCollectionExtensionInterface
             $queryBuilder->andWhere(sprintf("%s.isDeleted = false",
             $queryBuilder->getRootAliases()[0]));
         }
+        
+        if (User::class === $resourceClass) {
+            $queryBuilder->innerJoin(sprintf("%s.profil", $queryBuilder->getRootAliases()[0]), "p");
+            $queryBuilder->andWhere("p.libelle != 'apprenant'");
+        }
     }
 }

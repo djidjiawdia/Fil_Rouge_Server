@@ -34,3 +34,7 @@ services:
         class: App\Events\JWTCreatedListener
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
+
+    App\Events\LoginListener:
+        tags:
+            - {name: kernel.event_listener, event: security.authentication.success, method: onLoginSuccess}

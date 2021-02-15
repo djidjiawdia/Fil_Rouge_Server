@@ -96,6 +96,7 @@ class Groupe
         $this->apprenants = new ArrayCollection();
         $this->dateCreation = new DateTime();
         $this->isDeleted = false;
+        $this->type = "secondaire";
         $this->statut = true;
     }
 
