@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use ApiPlatform\Core\Validator\ValidatorInterface;
 use App\Entity\Apprenant;
+use App\Entity\Groupe;
+use App\Service\UploadService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,18 +26,21 @@ class PromoController extends AbstractController
     private $em;
     private $serializer;
     private $denormalizer;
+    private $uploadSer;
 
     public function __construct(
         UserPasswordEncoderInterface $encoder,
         SerializerInterface $serializer,
         EntityManagerInterface $em,
         ValidatorInterface $validator,
-        DenormalizerInterface $denormalizer
+        DenormalizerInterface $denormalizer,
+        UploadService $uploadSer
     ) {
         $this->encoder = $encoder;
         $this->serializer = $serializer;
         $this->em = $em;
         $this->validator = $validator;
+        $this->uploadSer = $uploadSer;
         $this->denormalizer = $denormalizer;
     }
 
@@ -54,6 +59,57 @@ class PromoController extends AbstractController
     public function getPromoGroupePrincipalAll(PromoRepository $repo){
         $promos = $repo->findByGroup("principal");
         return $this->json($promos, Response::HTTP_OK, [], ["groups" => ["promo_principal_read"]]);
+    }
+
+    /**
+     * @Route(
+     *      path="api/admin/promos/apprenants/attente",
+     *      name="get_promos_apprenant",
+     *      methods="GET",
+     *      defaults={
+     *          "_controller"="\App\PromoController::getAllPromoApprenantsAttente",
+     *           "_api_resource_class"=Promo::class,
+     *           "_api_collection_operation_name"="get_promos_apprenant"
+     *      }
+     * )
+     */
+    public function getAllPromoApprenantsAttente(PromoRepository $repo){
+        $promos = $repo->findAppAttente();
+        return $this->json($promos, Response::HTTP_OK, [], ["groups" => ["promo_apprenant_attente"]]);
+    }
+
+    /**
+     * @Route(
+     *      path="api/admin/promos/{id}",
+     *      name="get_promo",
+     *      methods="GET",
+     *      defaults={
+     *          "_controller"="\App\PromoController::getPromo",
+     *           "_api_resource_class"=Promo::class,
+     *           "_api_item_operation_name"="get_promo"
+     *      }
+     * )
+     */
+    public function getPromo(PromoRepository $repo, int $id){
+        $promos = $repo->find($id);
+        return $this->json($promos, Response::HTTP_OK, [], ["groups" => ["promo_read"]]);
+    }
+
+    /**
+     * @Route(
+     *      path="api/admin/promos/{id}/apprenants/attente",
+     *      name="get_promo_apprenant",
+     *      methods="GET",
+     *      defaults={
+     *          "_controller"="\App\PromoController::getPromoApprenantsAttente",
+     *           "_api_resource_class"=Promo::class,
+     *           "_api_item_operation_name"="get_promo_apprenant"
+     *      }
+     * )
+     */
+    public function getPromoApprenantsAttente(PromoRepository $repo, int $id){
+        $promos = $repo->findAppAttenteById($id);
+        return $this->json($promos, Response::HTTP_OK, [], ["groups" => ["promo_apprenant_attente"]]);
     }
 
     /**
@@ -154,23 +210,37 @@ class PromoController extends AbstractController
      *      methods="PUT",
      *      defaults={
      *           "_controller"="\app\PromosController::updatePromo",
-     *           "_api_resource_class"=Promos::class,
+     *           "_api_resource_class"=Promo::class,
      *           "_api_item_operation_name"="update_promo"
      *      }
      * )
      */
     public function updatePromo(Request $req, PromoRepository $repo, int $id)
     {
-        $ref = json_decode($req->getContent(), true);
+        // $ref = json_decode($req->getContent(), true);
         $promo = $repo->find($id);
-        if(!empty($ref["referentiel"]) and isset($ref["referentiel"]["id"])){
-            if($ref["referentiel"]["id"] === $promo->getReferentiel()->getId()){
-                if(isset($ref["referentiel"]["libelle"])){
-                    $promo->getReferentiel()->setLibelle($ref["referentiel"]["libelle"]);
+        if($promo && !$promo->getIsDeleted()) {
+            $promoTab = $this->uploadSer->getContentFromRequest($req, "avatar");
+            // dd($promoTab);
+            foreach($promoTab as $key => $value) {
+                // dump($key);
+                if($key !== "referentiel" || $key !== "formateurs" || $key !== "groupes") {
+                    $method = 'set'.ucfirst($key);
+                    if(method_exists($promo, $method)) {
+                        $promo->{$method}($value);
+                    }
                 }
             }
+            // dd("ok");
         }
         $this->em->flush();
+        // if(!empty($ref["referentiel"]) and isset($ref["referentiel"]["id"])){
+        //     if($ref["referentiel"]["id"] === $promo->getReferentiel()->getId()){
+        //         if(isset($ref["referentiel"]["libelle"])){
+        //             $promo->getReferentiel()->setLibelle($ref["referentiel"]["libelle"]);
+        //         }
+        //     }
+        // }
         return $this->json($promo, Response::HTTP_OK);
     }
 

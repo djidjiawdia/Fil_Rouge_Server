@@ -67,21 +67,29 @@ class GroupeCompetence
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"grpe_comp_read", "ref_read", "comp_write", "grpe_comp_write", "ref_write", "ref_grp_comp"})
+     * @Groups({
+     *  "grpe_comp_read",
+     *  "ref_read",
+     *  "comp_write",
+     *  "grpe_comp_write",
+     *  "ref_write",
+     *  "ref_grp_comp",
+     *  "promo_read", "promo_principal_read"
+     * })
      */
     private $id;
     
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le libellé ne doit pas être vide.")
-     * @Groups({"grpe_comp_read", "grpe_comp_write", "ref_grp_comp", "ref_read"})
+     * @Groups({"grpe_comp_read", "grpe_comp_write", "ref_grp_comp", "ref_read", "promo_read", "promo_principal_read"})
      */
     private $libelle;
     
     /**
      * @ORM\Column(type="text")
      * @Assert\NotBlank(message="Le descriptif ne doit pas être vide.")
-     * @Groups({"grpe_comp_read", "grpe_comp_write", "ref_grp_comp"})
+     * @Groups({"grpe_comp_read", "grpe_comp_write", "ref_grp_comp", "promo_read", "promo_principal_read"})
      */
     private $descriptif;
     
@@ -94,7 +102,7 @@ class GroupeCompetence
      *      minMessage="Affecter au moins une competence"
      * )
      * @ApiSubresource
-     * @Groups({"grpe_comp_read", "grpe_comp_write", "ref_grp_comp"})
+     * @Groups({"grpe_comp_read", "grpe_comp_write", "ref_grp_comp", "promo_read", "promo_principal_read"})
      */
     private $competences;
     

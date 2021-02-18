@@ -4,11 +4,13 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PromoRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
@@ -17,18 +19,13 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      fields={"titre"},
  *      message="Le titre est déjà utilisé"
  * )
+ * @ApiFilter(BooleanFilter::class, properties={"statut"})
  * @ApiResource( 
  *      routePrefix="admin/",
  *      attributes={"pagination_enabled"=false},
  *      normalizationContext={"groups"={"promo_read"}},
  *      denormalizationContext={"groups"={"promo_write"}},
  *      collectionOperations={
- *         "get_promos"={
- *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
- *              "security_message"="Vous n'avez pas access à cette Ressource",
- *              "path"="/promos",
- *              "method"="GET"
- *          },
  *          "get_promos_principal"={
  *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
  *              "security_message"="Vous n'avez pas access à cette Ressource",
@@ -39,21 +36,22 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *          "get_promos_apprenant"={
  *              "security"="(is_granted('ROLE_FORMATEUR'))",
  *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "normalization_context"={"groups"={"promo_apprenant_attente"}},
  *              "method"="GET", 
  *              "path"="/promos/apprenants/attente"
  *          },
- *           "add_promo"={
- *              "method"="POST",
- *              "deserialize"=false
- *          },
- * 
- *      },
- *      itemOperations={
- *          "get_promo"={
+ *          "get_promos"={
  *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
  *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "path"="/promos",
  *              "method"="GET"
  *          },
+ *          "add_promo"={
+ *              "method"="POST",
+ *              "deserialize"=false
+ *          }
+ *      },
+ *      itemOperations={
  *          "get_promo_principal"={
  *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
  *              "security_message"="Vous n'avez pas access à cette Ressource",
@@ -61,7 +59,13 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *              "method"="GET", 
  *              "path"="/promos/{id}/principal"
  *          },
- *           "get_promo_referentiel"={
+ *          "get_promo"={
+ *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
+ *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "path"="/promos/{id}",
+ *              "method"="GET"
+ *          },
+ *          "get_promo_referentiel"={
  *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
  *              "security_message"="Vous n'avez pas access à cette Ressource",
  *              "normalization_context"={"groups"={"promo_referentiel_read"}},
@@ -91,7 +95,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *          "update_promo"={
  *              "security"="(is_granted('ROLE_FORMATEUR'))",
  *              "security_message"="Vous n'avez pas access à cette Ressource",
- *              "method"="PUT"
+ *              "method"="PUT",
+ *              "deserialize"=false
  *          },
  *          "update_promo_apprenant"={
  *              "security"="(is_granted('ROLE_FORMATEUR'))",
@@ -131,6 +136,7 @@ class Promo
      *      "promo_write",
      *      "promo_read",
      *      "promo_principal_read",
+     *      "promo_apprenant_attente",
      *      "groupe_write"
      * })
      */
@@ -223,7 +229,7 @@ class Promo
      *      min=1,
      *      minMessage="Ajouter le groupe principal"
      * )
-     * @Groups({"promo_write", "promo_read", "promo_principal_read"})
+     * @Groups({"promo_write", "promo_read", "promo_principal_read", "promo_apprenant_attente"})
      */
     private $groupes;
 
@@ -235,7 +241,7 @@ class Promo
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"promo_read", "promo_write"})
+     * @Groups({"promo_read", "promo_write", "promo_apprenant_attente"})
      */
     private $statut;
 

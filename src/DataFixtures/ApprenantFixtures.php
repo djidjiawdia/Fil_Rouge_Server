@@ -21,22 +21,22 @@ class ApprenantFixtures extends Fixture implements DependentFixtureInterface
     
     public function load(ObjectManager $manager)
     {
-        $faker = Faker\Factory::create();
-        for($i=0; $i<2; $i++) {
-            $profil = $this->getReference(ProfilFixtures::getRefKey(2));
-            $user = new Apprenant();
-            $user
-                ->setPrenom($faker->firstName)
-                ->setNom($faker->lastName)
-                ->setEmail('apprenant'.($i+1).'@test.com')
-                ->setProfil($profil)
-                ->setPassword($this->encoder->encodePassword($user, "test"))
-            ;
+        // $faker = Faker\Factory::create();
+        // for($i=0; $i<2; $i++) {
+        //     $profil = $this->getReference(ProfilFixtures::getRefKey(2));
+        //     $user = new Apprenant();
+        //     $user
+        //         ->setPrenom($faker->firstName)
+        //         ->setNom($faker->lastName)
+        //         ->setEmail('apprenant'.($i+1).'@test.com')
+        //         ->setProfil($profil)
+        //         ->setPassword($this->encoder->encodePassword($user, "test"))
+        //     ;
 
-            $manager->persist($user);
-        }
+        //     $manager->persist($user);
+        // }
 
-        $manager->flush();
+        // $manager->flush();
     }
 
     public function getDependencies()

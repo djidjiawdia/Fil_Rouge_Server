@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Entity\User;
+use App\Entity\Apprenant;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 
@@ -18,7 +18,7 @@ class LoginListener
     public function onLoginSuccess(AuthenticationEvent $event) {
         $user = $event->getAuthenticationToken()->getUser();
 
-        if (!$user instanceof User) {
+        if (!$user instanceof Apprenant) {
             return false;
         }
 

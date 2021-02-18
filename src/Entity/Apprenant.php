@@ -3,14 +3,18 @@
 namespace App\Entity;
 
 use App\Entity\User;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ApprenantRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 
 /**
  * @ORM\Entity(repositoryClass=ApprenantRepository::class)
+ * @ApiFilter(BooleanFilter::class, properties={"statut"})
  * @ApiResource(
  *      collectionOperations={
  *          "get_apprenants"={
@@ -56,9 +60,16 @@ class Apprenant extends User
      */
     private $groupes;
 
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"user_read", "promo_apprenant_attente"})
+     */
+    private $statut;
+
     public function __construct()
     {
         parent::__construct();
+        $this->statut = false;
         $this->groupes = new ArrayCollection();
     }
 
@@ -97,6 +108,18 @@ class Apprenant extends User
         if ($this->groupes->removeElement($groupe)) {
             $groupe->removeApprenant($this);
         }
+
+        return $this;
+    }
+
+    public function getStatut(): ?bool
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(bool $statut): self
+    {
+        $this->statut = $statut;
 
         return $this;
     }

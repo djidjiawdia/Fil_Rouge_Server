@@ -120,7 +120,7 @@ class Referentiel
      * @ORM\ManyToMany(targetEntity=GroupeCompetence::class, inversedBy="referentiels")
      * @Assert\Valid
      * @ApiSubresource()
-     * @Groups({"ref_write", "ref_read", "ref_grp_comp"})
+     * @Groups({"ref_write", "ref_read", "ref_grp_comp", "promo_read", "promo_principal_read"})
      */
     private $groupeCompetences;
 

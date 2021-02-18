@@ -21,10 +21,11 @@ final class UploadService
             $key = explode('"', $attr[0]);
             $key = $key[1];
             if($key === $filename) {
-                $data = end($attr);
-                dd((base64_encode($data)));
-
+                // $data = end($attr);
+                // dd($attr);
+                // dd((base64_encode($data)));
                 $data[$key] = $this->uploadFile(end($attr));
+                // dd($data);
             }else {
                 $data[$key] = end($attr);
             }

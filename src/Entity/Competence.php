@@ -61,7 +61,14 @@ class Competence
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"grpe_comp_read", "grpe_comp_write", "comp_read", "comp_write", "ref_grp_comp"})
+     * @Groups({
+     *  "grpe_comp_read",
+     *  "grpe_comp_write",
+     *  "comp_read",
+     *  "comp_write",
+     *  "ref_grp_comp",
+     *  "promo_read", "promo_principal_read"
+     * })
      */
     private $id;
 
@@ -73,7 +80,8 @@ class Competence
      *      "grpe_comp_write",
      *      "comp_write",
      *      "comp_read",
-     *      "ref_grp_comp"
+     *      "ref_grp_comp",
+     *      "promo_read", "promo_principal_read"
      * })
      */
     private $libelle;
@@ -86,7 +94,7 @@ class Competence
      *      max=3,
      *      exactMessage="Vous devrez avoir exactement {{ limit }} niveaux"
      * )
-     * @Groups({"grpe_comp_read", "grpe_comp_write", "comp_write", "comp_read", "ref_grp_comp"})
+     * @Groups({"grpe_comp_read", "grpe_comp_write", "comp_write", "comp_read", "ref_grp_comp", "promo_read", "promo_principal_read"})
      */
     private $niveaux;
 

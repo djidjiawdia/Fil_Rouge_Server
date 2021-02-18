@@ -19,6 +19,40 @@ class PromoRepository extends ServiceEntityRepository
         parent::__construct($registry, Promo::class);
     }
 
+    public function findAppAttente()
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.statut = :stat')
+            ->innerJoin('p.groupes', 'g')
+            ->innerJoin('g.apprenants', 'a')
+            ->andwhere('g.type = :val1')
+            ->andwhere('a.statut = :val')
+            ->setParameter('stat', false)
+            ->setParameter('val1', 'principal')
+            ->setParameter('val', true)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findAppAttenteById($id)
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.id = :valId')
+            ->andwhere('p.statut = :stat')
+            ->innerJoin('p.groupes', 'g')
+            ->andwhere('g.type = :val1')
+            ->innerJoin('g.apprenants', 'a')
+            ->andwhere('a.statut = :val')
+            ->setParameter('val1', 'principal')
+            ->setParameter('valId', $id)
+            ->setParameter('stat', false)
+            ->setParameter('val', false)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     public function findByGroup($value)
     {
         return $this->createQueryBuilder('p')

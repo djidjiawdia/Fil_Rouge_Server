@@ -5,12 +5,13 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping\InheritanceType;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use Doctrine\ORM\Mapping\DiscriminatorMap;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
@@ -70,8 +71,10 @@ class User implements UserInterface
      *      "user_write",
      *      "profil_read_user",
      *      "promo_write",
+     *      "promo_read",
      *      "groupe_write",
-     *      "promo_principal_read"
+     *      "promo_principal_read",
+     *      "promo_apprenant_attente"
      * })
      */
     protected $id;
@@ -85,7 +88,11 @@ class User implements UserInterface
      *      "user_write",
      *      "promo_write",
      *      "groupe_write",
-     *      "promo_principal_read"
+     *      "promo_principal_read",
+     *      "promo_apprenant_attente",
+     *      "promo_read",
+     *      "groupe_read",
+     *      "groupe_app_read"
      * })
      */
     protected $email;
@@ -106,6 +113,7 @@ class User implements UserInterface
      *      "profil_read_user",
      *      "promo_read",
      *      "promo_principal_read",
+     *      "promo_apprenant_attente",
      *      "groupe_read",
      *      "groupe_app_read"
      * })
@@ -120,6 +128,7 @@ class User implements UserInterface
      *      "profil_read_user",
      *      "promo_read",
      *      "promo_principal_read",
+     *      "promo_apprenant_attente",
      *      "groupe_read",
      *      "groupe_app_read"
      * })
@@ -128,15 +137,15 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="blob", nullable=true)
-     * @Groups({"user_read", "user_write"})
+     * @Groups({"user_read", "user_write", "promo_principal_read"})
      */
     protected $avatar;
 
-    /**
-     * @ORM\Column(type="boolean")
-     * @Groups({"user_read"})
-     */
-    protected $statut;
+    // /**
+    //  * @ORM\Column(type="boolean")
+    //  * @Groups({"user_read"})
+    //  */
+    // protected $statut;
 
     /**
      * @ORM\Column(type="boolean")
@@ -158,7 +167,6 @@ class User implements UserInterface
 
     public function __construct()
     {
-        $this->statut = false;
         $this->isDeleted = false;
     }
 
@@ -203,7 +211,7 @@ class User implements UserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_'.strtoupper($this->getProfil()->getLibelle());
+        $roles[] = 'ROLE_' . strtoupper($this->getProfil()->getLibelle());
 
         return array_unique($roles);
     }
@@ -273,7 +281,7 @@ class User implements UserInterface
 
     public function getAvatar()
     {
-        if($this->avatar != null){
+        if ($this->avatar != null) {
             return \base64_encode(stream_get_contents($this->avatar));
         }
         return $this->avatar;
@@ -286,17 +294,17 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getStatut(): ?bool
-    {
-        return $this->statut;
-    }
+    // public function getStatut(): ?bool
+    // {
+    //     return $this->statut;
+    // }
 
-    public function setStatut(bool $statut): self
-    {
-        $this->statut = $statut;
+    // public function setStatut(bool $statut): self
+    // {
+    //     $this->statut = $statut;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getIsDeleted(): ?bool
     {

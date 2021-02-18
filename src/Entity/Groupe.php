@@ -23,12 +23,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      denormalizationContext={"groups"={"groupe_write"}},
  *      collectionOperations={
  *          "GET",
- *          "get_apprenant"={
+ *          "get_apprenants"={
  *              "method"="GET",
  *              "path"="/groupes/apprenants",
  *              "normalization_context"={"groups"={"groupe_app_read"}}
  *          },
- *          "POST"
+ *          "POST"={
+ *              "method"="POST",
+ *              "path"="/groupes"
+ *          }
  *      },
  *      itemOperations={"GET", "PUT"}
  * )
@@ -52,13 +55,14 @@ class Groupe
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"groupe_read", "groupe_write"})
      */
     private $statut;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le type ne doit pas être vide")
-     * @Groups({"promo_read", "groupe_read"})
+     * @Groups({"promo_read", "groupe_read", "promo_principal_read", "promo_apprenant_attente"})
      */
     private $type;
 
@@ -70,13 +74,13 @@ class Groupe
 
     /**
      * @ORM\ManyToMany(targetEntity=Formateur::class, inversedBy="groupes")
-     * @Groups({"groupe_read", "groupe_write"})
+     * @Groups({"groupe_read", "groupe_write", "promo_write"})
      */
     private $formateurs;
 
     /**
      * @ORM\ManyToMany(targetEntity=Apprenant::class, inversedBy="groupes", cascade={"persist"})
-     * @Groups({"promo_write", "promo_principal_read", "groupe_app_read", "groupe_write"})
+     * @Groups({"promo_write", "promo_read", "promo_principal_read", "promo_apprenant_attente", "groupe_app_read", "groupe_write"})
      */
     private $apprenants;
 
