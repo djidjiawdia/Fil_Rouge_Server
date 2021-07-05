@@ -15,31 +15,23 @@ use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class UserController extends AbstractController
 {
     static $att_name = "admin";
 
     private $em;
-    private $validator;
     private $uploadSer;
     private $userService;
 
     public function __construct(
-        ProfilRepository $profilRepo,
-        DenormalizerInterface $denormalizer,
-        UserPasswordEncoderInterface $encoder,
-        ValidatorInterface $validator,
         EntityManagerInterface $em,
         UploadService $uploadSer,
         UserService $userService
     )
     {
-        $this->denormalizer = $denormalizer;
-        $this->profilRepo = $profilRepo;
         $this->em = $em;
-        $this->encoder = $encoder;
-        $this->validator = $validator;
         $this->uploadSer = $uploadSer;
         $this->userService = $userService;
     }
@@ -58,9 +50,9 @@ class UserController extends AbstractController
      */
     public function createUser(Request $req) {
         $user = $this->userService->createUser($req);
-        // dd($user);
         $this->em->persist($user);
         $this->em->flush();
+        
         return $this->json($user, Response::HTTP_CREATED, [], ["groups" => ["user_read"]]);
     }
 
@@ -80,7 +72,7 @@ class UserController extends AbstractController
     {
         $user = $userRepo->find($id);
         if($user && !$user->getIsDeleted()) {
-            $userTab = $this->uploadSer->getContentFromReq($req, "avatar");
+            $userTab = $this->uploadSer->getContentFromRequest($req, "avatar");
             // dd($userTab);
             $user = $this->userService->updateUser($user, $userTab);
             // dd($user);

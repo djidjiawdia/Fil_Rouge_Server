@@ -59,7 +59,7 @@ class UserService
         }else{
             return new JsonResponse(["message" => "Le profil est introuvable"], Response::HTTP_BAD_REQUEST);
         }
-        // dd($user);
+        // dd($user->getAvatar());
         $errors = $this->validator->validate($user);
         if($errors){
             return new JsonResponse($errors, Response::HTTP_BAD_REQUEST);

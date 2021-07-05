@@ -85,7 +85,7 @@ class Profil
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="profil")
      * @ApiSubresource
-     * @Groups({"profil_read_user"})
+     * @Groups({"profil_read_user", "profil_read"})
      */
     private $users;
 

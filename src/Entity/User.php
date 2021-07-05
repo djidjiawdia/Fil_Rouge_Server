@@ -70,6 +70,7 @@ class User implements UserInterface
      *      "user_read",
      *      "user_write",
      *      "profil_read_user",
+     *      "profil_read",
      *      "promo_write",
      *      "promo_read",
      *      "groupe_write",
@@ -85,6 +86,7 @@ class User implements UserInterface
      * @Assert\Email(message = "L'email '{{ value }}' n'est pas valid.")
      * @Groups({
      *      "user_read",
+     *      "profil_read",
      *      "user_write",
      *      "promo_write",
      *      "groupe_write",
@@ -109,6 +111,7 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({
      *      "user_read",
+     *      "profil_read",
      *      "user_write",
      *      "profil_read_user",
      *      "promo_read",
@@ -124,6 +127,7 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({
      *      "user_read",
+     *      "profil_read",
      *      "user_write",
      *      "profil_read_user",
      *      "promo_read",
@@ -137,7 +141,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="blob", nullable=true)
-     * @Groups({"user_read", "user_write", "promo_principal_read"})
+     * @Groups({"user_read", "profil_read", "user_write", "promo_principal_read"})
      */
     protected $avatar;
 
@@ -149,7 +153,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"user_read"})
+     * @Groups({"user_read", "profil_read"})
      */
     protected $isDeleted;
 
@@ -279,7 +283,7 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getAvatar()
+    public function getAvatar(): ?string
     {
         if ($this->avatar != null) {
             return \base64_encode(stream_get_contents($this->avatar));

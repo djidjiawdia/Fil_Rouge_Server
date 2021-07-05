@@ -7,10 +7,11 @@ use App\Entity\User;
 use App\Entity\Profil;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class UserFixtures extends Fixture implements DependentFixtureInterface
+class UserFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface
 {
     private $encoder;
     
@@ -44,5 +45,10 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         return array(
             ProfilFixtures::class
         );
+    }
+
+    public static function getGroups(): array
+    {
+        return ['group1'];
     }
 }

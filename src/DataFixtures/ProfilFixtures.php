@@ -5,8 +5,9 @@ namespace App\DataFixtures;
 use App\Entity\Profil;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 
-class ProfilFixtures extends Fixture
+class ProfilFixtures extends Fixture implements FixtureGroupInterface
 {
     public static function getRefKey(int $i)
     {
@@ -25,6 +26,12 @@ class ProfilFixtures extends Fixture
         }
         
         $manager->flush();
+    }
+
+
+    public static function getGroups(): array
+    {
+        return ['group1'];
     }
 
 }
