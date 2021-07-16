@@ -31,7 +31,7 @@ class JWTCreatedListener
             return false;
         }
 
-        $payload["avatar"] = $user->getAvatar();
+        $payload["id"] = $user->getId();
 
         $event->setData($payload);
     }

@@ -45,6 +45,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *          },
  *          "add_referentiel"={
  *              "method"="POST",
+ *              "deserialize"=false,
  *              "security"="is_granted('REF_CREATE', object)",
  *              "security_message"="Vous n'avez pas accès à cette ressource"
  *          }
@@ -57,6 +58,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *          },
  *          "update_referentiel"={
  *              "method"="PUT",
+ *              "deserialize"=false,
  *              "security"="is_granted('REF_EDIT', object)",
  *              "security_message"="Vous n'avez pas accès à cette ressource"
  *          }
@@ -144,6 +146,12 @@ class Referentiel
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+        return $this;
     }
 
     public function getLibelle(): ?string

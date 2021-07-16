@@ -22,6 +22,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ApiFilter(BooleanFilter::class, properties={"isDeleted"})
  * @ApiResource(
  *      routePrefix="/admin",
+ *      attributes={"pagination_enabled"=false},
  *      normalizationContext={"groups"={"comp_read"}},
  *      denormalizationContext={"groups"={"comp_write"}},
  *      collectionOperations={
