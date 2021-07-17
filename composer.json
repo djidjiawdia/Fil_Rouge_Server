@@ -78,7 +78,7 @@
         "post-install-cmd": [
             "@auto-scripts",
             "php bin/console doctrine:schema:update --force",
-            "php bin/console doctrine:fixtures:load --no-interaction"
+            "php bin/console doctrine:fixtures:load --group=group1 --no-interaction"
         ],
         "post-update-cmd": [
             "@auto-scripts"
