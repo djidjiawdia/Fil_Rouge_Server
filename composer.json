@@ -71,15 +71,14 @@
             "php bin/console doctrine:database:create",
             "php bin/console doctrine:schema:update --force"
         ],
-        "compile": [
-            "php bin/console doctrine:fixtures:load --no-interaction"
-        ],
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
         "post-install-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
+            "php bin/console doctrine:schema:update --force",
+            "php bin/console doctrine:fixtures:load --no-interaction"
         ],
         "post-update-cmd": [
             "@auto-scripts"
