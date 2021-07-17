@@ -20,6 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *      routePrefix="admin/",
  *      attributes={
+ *          "pagination_enabled"=false,
  *          "security"="is_granted('ROLE_FORMATEUR')",
  *          "security_message"="Vous n'avez pas accès aux tags"
  *      },
@@ -49,7 +50,7 @@ class Tag
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"grptag_write", "tag_write"})
+     * @Groups({"grptag_write", "tag_write", "grptag_read", "tag_read",})
      */
     private $id;
 
@@ -59,13 +60,6 @@ class Tag
      * @Groups({"grptag_read", "grptag_write", "tag_read", "tag_write"})
      */
     private $libelle;
-    
-    /**
-     * @ORM\Column(type="text")
-     * @Assert\NotBlank(message="Le descriptif ne doit pas être vide.")
-     * @Groups({"grptag_read", "grptag_write", "tag_read", "tag_write"})
-     */
-    private $descriptif;
 
     /**
      * @ORM\Column(type="boolean")
@@ -97,18 +91,6 @@ class Tag
     public function setLibelle(string $libelle): self
     {
         $this->libelle = $libelle;
-
-        return $this;
-    }
-
-    public function getDescriptif(): ?string
-    {
-        return $this->descriptif;
-    }
-
-    public function setDescriptif(string $descriptif): self
-    {
-        $this->descriptif = $descriptif;
 
         return $this;
     }

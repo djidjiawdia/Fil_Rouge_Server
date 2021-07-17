@@ -16,13 +16,10 @@ class TagFixtures extends Fixture
     
     public function load(ObjectManager $manager)
     {
-        $f = Faker\Factory::create();
         $tags = ["HTML", "CSS", "Angular 10", "Symfony 5.1", "JavaScript", "PHP", "Python"];
         foreach($tags as $k => $libelle){
             $tag = new Tag();
-            $tag
-                ->setLibelle($libelle)
-                ->setDescriptif($f->text());
+            $tag->setLibelle($libelle);
             $manager->persist($tag);
             $this->addReference(self::getRefKey($k), $tag);
         }

@@ -20,6 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *      routePrefix="/admin",
  *      attributes={
+ *          "pagination_enabled"=false,
  *          "security"="is_granted('ROLE_FORMATEUR')",
  *          "security_message"="Vous n'avez pas accès aux tags"
  *      },
@@ -53,7 +54,7 @@ class GroupeTag
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"grptag_write", "tag_write"})
+     * @Groups({"grptag_write", "tag_write", "grptag_read"})
      */
     private $id;
 
