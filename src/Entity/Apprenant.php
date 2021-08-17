@@ -23,12 +23,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
  *              "normalization_context"={"groups"={"user_read"}},
  *              "security"="is_granted('ROLE_FORMATEUR') or is_granted('ROLE_CM')",
  *              "security_message"="Vous n'avez pas accès à cette ressource"
- *          },
- *          "create_apprenant"={
- *              "method"="POST",
- *              "deserialize"=false,
- *              "security"="is_granted('ROLE_FORMATEUR')",
- *              "security_message"="Vous n'avez pas accès à cette ressource"
  *          }
  *      },
  *      itemOperations={
@@ -42,6 +36,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
  *          "update_apprenant"={
  *              "method"="PUT",
  *              "path"="/apprenants/{id}",
+ *              "deserialize"=false,
  *              "security"="is_granted('APP_EDIT', object)",
  *              "security_message"="Vous n'avez pas accès à cette ressource"
  *          },
@@ -62,14 +57,14 @@ class Apprenant extends User
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"user_read", "promo_apprenant_attente"})
+     * @Groups({"user_read", "promo_read", "promo_principal_read", "promo_apprenant_attente", "profilsortie_read"})
      */
     private $statut;
 
     public function __construct()
     {
         parent::__construct();
-        $this->statut = false;
+        $this->statut = true;
         $this->groupes = new ArrayCollection();
     }
 

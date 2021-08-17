@@ -12,19 +12,13 @@ use ApiPlatform\Core\Annotation\ApiResource;
 /**
  * @ORM\Entity(repositoryClass=FormateurRepository::class)
  * @ApiResource(
+ *      attributes={"pagination_enabled"=false},
  *      collectionOperations={
  *          "get_formateurs"={
  *              "method"="GET",
  *              "path"="/formateurs",
  *              "normalization_context"={"groups"={"user_read"}},
  *              "security"="is_granted('ROLE_CM')",
- *              "security_message"="Vous n'avez pas accès à cette ressource"
- *          },
- *          "create_formateur"={
- *              "method"="POST",
- *              "path"="/formateurs",
- *              "deserialize"=false,
- *              "security"="is_granted('ROLE_ADMIN')",
  *              "security_message"="Vous n'avez pas accès à cette ressource"
  *          }
  *      },

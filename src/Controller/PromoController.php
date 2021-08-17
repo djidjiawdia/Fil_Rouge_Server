@@ -46,6 +46,23 @@ class PromoController extends AbstractController
 
     /**
      * @Route(
+     *      path="api/admin/promos",
+     *      name="get_groupes",
+     *      methods="GET",
+     *      defaults={
+     *          "_controller"="\App\PromoController::getAllPromos",
+     *           "_api_resource_class"=Promo::class,
+     *           "_api_collection_operation_name"="get_promos"
+     *      }
+     * )
+     */
+    public function getAllPromos(PromoRepository $repo){
+        $promos = $repo->findAll();
+        return $this->json($promos, Response::HTTP_OK, [], ["groups" => ["promo_read"]]);
+    }
+
+    /**
+     * @Route(
      *      path="api/admin/promos/principal",
      *      name="promo_groupe_principal_all",
      *      methods="GET",
@@ -126,6 +143,7 @@ class PromoController extends AbstractController
      */
     public function getPromoGroupePrincipal(PromoRepository $repo, $id){
         $promo = $repo->findOneByGroup("principal", $id);
+        // dd($promo);
         return $this->json($promo, Response::HTTP_OK, [], ["groups" => ["promo_principal_read"]]);
     }
 

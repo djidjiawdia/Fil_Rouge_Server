@@ -3,6 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\CommunityManager;
+use App\Repository\CommunityManagerRepository;
+use App\Service\UploadService;
+use App\Service\UserService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -10,27 +14,45 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CommunityManagerController extends AbstractController
 {
-    static $att_name = "cm";
+    private $em;
+    private $uploadSer;
+    private $userService;
+
+    public function __construct(
+        EntityManagerInterface $em,
+        UploadService $uploadSer,
+        UserService $userService
+    )
+    {
+        $this->em = $em;
+        $this->uploadSer = $uploadSer;
+        $this->userService = $userService;
+    }
     
     /**
      * @Route(
-     *      path="/cmanagers", 
-     *      name="create_cm",
-     *      methods="POST",
+     *      path="/api/cmangers/{id}", 
+     *      name="update_cmanager",
+     *      methods="PUT",
      *      defaults={
-     *          "_controller"="\App\CommunityManagerController::createCm",
-     *          "_api_ressource_class"=CommunityManager::class,
-     *          "_api_collection_operation_name"="create_cm"
+     *          "_controller"="\App\ApprenantController::updateCManager",
+     *          "_api_ressource_class"=Apprenant::class,
+     *          "_api_item_operation_name"="update_cmanager"
      *      }
      * )
      */
-    public function createCm(Request $req): Response
+    public function updateCManager(Request $req, int $id, CommunityManagerRepository $repo): Response
     {
-        $user = $this->userService->createUser($req, self::$att_name, CommunityManager::class);
-        // dd($user);
-        $this->em->persist($user);
-        $this->em->flush();
+        $cmanager = $repo->find($id);
+        if($cmanager && !$cmanager->getIsDeleted()) {
+            $userTab = $this->uploadSer->getContentFromRequest($req, "avatar");
+            // dd($userTab);
+            $cmanager = $this->userService->updateUser($cmanager, $userTab);
+            // dd($user);
+
+            $this->em->flush();
+        }
         
-        return $this->json($user, Response::HTTP_CREATED, [], ["groups" => "user_read"]);
+        return $this->json($cmanager, Response::HTTP_OK, [], ["groups" => "user_read"]);
     }
 }

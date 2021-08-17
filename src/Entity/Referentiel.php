@@ -76,7 +76,8 @@ class Referentiel
      *      "ref_read",
      *      "promo_write",
      *      "promo_read",
-     *      "promo_principal_read"
+     *      "promo_principal_read",
+     *      "promo_referentiel_read"
      * })
      */
     private $id;
@@ -88,7 +89,8 @@ class Referentiel
      *      "ref_write",
      *      "ref_read",
      *      "promo_read",
-     *      "promo_principal_read"
+     *      "promo_principal_read",
+     *      "promo_referentiel_read"
      * })
      */
     private $libelle;

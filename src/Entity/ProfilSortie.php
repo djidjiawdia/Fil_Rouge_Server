@@ -74,6 +74,7 @@ class ProfilSortie
 
     /**
      * @ORM\OneToMany(targetEntity=Apprenant::class, mappedBy="profilSortie")
+     * @Groups({"profilsortie_read"})
      */
     private $apprenants;
 

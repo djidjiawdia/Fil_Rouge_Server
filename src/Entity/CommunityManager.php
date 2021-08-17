@@ -17,12 +17,6 @@ use App\Repository\CommunityManagerRepository;
  *              "security"="is_granted('ROLE_ADMIN')",
  *              "security_message"="Vous n'avez pas accès à cette ressource"
  *          },
- *          "create_cmanger"={
- *              "method"="POST",
- *              "deserialize"=false,
- *              "security"="is_granted('ROLE_ADMIN')",
- *              "security_message"="Vous n'avez pas accès à cette ressource"
- *          }
  *      },
  *      itemOperations={
  *          "get_cmanager"={
@@ -35,6 +29,7 @@ use App\Repository\CommunityManagerRepository;
  *          "update_cmanager"={
  *              "method"="PUT",
  *              "path"="/cmangers/{id}",
+ *              "deserialize"=false,
  *              "security"="is_granted('CM_EDIT', object)",
  *              "security_message"="Vous n'avez pas accès à cette ressource"
  *          },

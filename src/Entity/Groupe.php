@@ -33,7 +33,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "path"="/groupes"
  *          }
  *      },
- *      itemOperations={"GET", "PUT"}
+ *      itemOperations={
+ *          "GET",
+ *          "get_apprenants_by_id"={
+ *              "method"="GET",
+ *              "path"="/groupes/{id}/apprenants",
+ *              "normalization_context"={"groups"={"groupe_app_read"}}
+ *          },
+ *          "PUT"
+ *      }
  * )
  */
 class Groupe
@@ -42,7 +50,7 @@ class Groupe
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"promo_write", "promo_read", "groupe_write"})
+     * @Groups({"promo_write", "promo_read", "groupe_write", "promo_apprenant_attente", "groupe_read", "groupe_app_read"})
      */
     private $id;
 
@@ -80,7 +88,7 @@ class Groupe
 
     /**
      * @ORM\ManyToMany(targetEntity=Apprenant::class, inversedBy="groupes", cascade={"persist"})
-     * @Groups({"promo_write", "promo_read", "promo_principal_read", "promo_apprenant_attente", "groupe_app_read", "groupe_write"})
+     * @Groups({"promo_write", "promo_read", "promo_principal_read", "promo_apprenant_attente", "groupe_read", "groupe_app_read", "groupe_write"})
      */
     private $apprenants;
 

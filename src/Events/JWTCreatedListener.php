@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Entity\Apprenant;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
@@ -29,6 +30,11 @@ class JWTCreatedListener
         // if the user is anonymous, do not grant access
         if (!$user instanceof User) {
             return false;
+        }
+        
+        if($user instanceof Apprenant) {
+            // dd('apprenant');
+            $payload["statut"] = $user->getStatut();
         }
 
         $payload["id"] = $user->getId();

@@ -26,6 +26,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      normalizationContext={"groups"={"promo_read"}},
  *      denormalizationContext={"groups"={"promo_write"}},
  *      collectionOperations={
+ *          "get_promos"={
+ *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
+ *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "path"="/promos",
+ *              "method"="GET"
+ *          },
  *          "get_promos_principal"={
  *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
  *              "security_message"="Vous n'avez pas access à cette Ressource",
@@ -40,30 +46,24 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *              "method"="GET", 
  *              "path"="/promos/apprenants/attente"
  *          },
- *          "get_promos"={
- *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
- *              "security_message"="Vous n'avez pas access à cette Ressource",
- *              "path"="/promos",
- *              "method"="GET"
- *          },
  *          "add_promo"={
  *              "method"="POST",
  *              "deserialize"=false
  *          }
  *      },
  *      itemOperations={
+ *          "get_promo"={
+ *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
+ *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "path"="/promos/{id}",
+ *              "method"="GET"
+ *          },
  *          "get_promo_principal"={
  *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
  *              "security_message"="Vous n'avez pas access à cette Ressource",
  *              "normalization_context"={"groups"={"promo_principal_read"}},
  *              "method"="GET", 
  *              "path"="/promos/{id}/principal"
- *          },
- *          "get_promo"={
- *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
- *              "security_message"="Vous n'avez pas access à cette Ressource",
- *              "path"="/promos/{id}",
- *              "method"="GET"
  *          },
  *          "get_promo_referentiel"={
  *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
@@ -75,6 +75,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *          "get_promo_apprenant"={
  *              "security"="(is_granted('ROLE_FORMATEUR','ROLE_CM'))",
  *              "security_message"="Vous n'avez pas access à cette Ressource",
+ *              "normalization_context"={"groups"={"promo_apprenant_attente"}},
  *              "method"="GET", 
  *              "path"="/promos/{id}/apprenants/attente"
  *          },
@@ -137,6 +138,7 @@ class Promo
      *      "promo_read",
      *      "promo_principal_read",
      *      "promo_apprenant_attente",
+     *      "promo_referentiel_read",
      *      "groupe_write"
      * })
      */
@@ -165,6 +167,7 @@ class Promo
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"promo_write", "promo_read", "promo_principal_read", "groupe_read"})
      */
     private $lieu;
 
@@ -196,7 +199,7 @@ class Promo
     /**
      * @ORM\ManyToOne(targetEntity=Referentiel::class, inversedBy="promos")
      * @Assert\NotNull(message="Le referentiel est obligatoire")
-     * @Groups({"promo_write", "promo_read", "promo_principal_read"})
+     * @Groups({"promo_write", "promo_read", "promo_principal_read", "promo_referentiel_read"})
      */
     private $referentiel;
 

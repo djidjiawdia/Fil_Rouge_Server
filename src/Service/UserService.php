@@ -71,12 +71,16 @@ class UserService
     public function updateUser($user, array $data)
     {
         foreach($data as $key => $value) {
-            if($key !== 'profil') {
+            if($key !== 'profil' && $key !== 'password') {
                 $method = 'set'.ucfirst($key);
                 if(method_exists($user, $method)) {
                     $user->{$method}($value);
                 }
             }
+        }
+
+        if(isset($data['password']) && !empty($data['password'])) {
+            $user->setPassword($this->encoder->encodePassword($user, $value));
         }
 
         $errors = $this->validator->validate($user);

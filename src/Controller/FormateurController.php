@@ -30,27 +30,27 @@ class FormateurController extends AbstractController
         $this->em = $em;
     }
 
-    /**
-     * @Route(
-     *      path="/api/formateurs", 
-     *      name="create_formateur",
-     *      methods="POST",
-     *      defaults={
-     *          "_controller"="\App\FormateurController::createFormateur",
-     *          "_api_ressource_class"=Formateur::class,
-     *          "_api_collection_operation_name"="create_formateur"
-     *      }
-     * )
-     */
-    public function createFormateur(Request $req): Response
-    {
-        $user = $this->userService->createUser($req, self::$att_name, Formateur::class);
-        // dd($user);
-        $this->em->persist($user);
-        $this->em->flush();
+    // /**
+    //  * @Route(
+    //  *      path="/api/formateurs", 
+    //  *      name="create_formateur",
+    //  *      methods="POST",
+    //  *      defaults={
+    //  *          "_controller"="\App\FormateurController::createFormateur",
+    //  *          "_api_ressource_class"=Formateur::class,
+    //  *          "_api_collection_operation_name"="create_formateur"
+    //  *      }
+    //  * )
+    //  */
+    // public function createFormateur(Request $req): Response
+    // {
+    //     $user = $this->userService->createUser($req, self::$att_name, Formateur::class);
+    //     // dd($user);
+    //     $this->em->persist($user);
+    //     $this->em->flush();
 
-        return $this->json($user, Response::HTTP_CREATED, [], ["groups" => "user_read"]);
-    }
+    //     return $this->json($user, Response::HTTP_CREATED, [], ["groups" => "user_read"]);
+    // }
 
     /**
      * @Route(

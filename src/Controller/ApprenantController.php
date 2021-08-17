@@ -3,6 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Apprenant;
+use App\Repository\ApprenantRepository;
+use App\Service\UploadService;
+use App\Service\UserService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -10,27 +14,50 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ApprenantController extends AbstractController
 {
-    static $att_name = "apprenant";
+    private $em;
+    private $uploadSer;
+    private $userService;
+
+    public function __construct(
+        EntityManagerInterface $em,
+        UploadService $uploadSer,
+        UserService $userService
+    )
+    {
+        $this->em = $em;
+        $this->uploadSer = $uploadSer;
+        $this->userService = $userService;
+    }
     
     /**
      * @Route(
-     *      path="/apprenants", 
-     *      name="create_apprenant",
-     *      methods="POST",
+     *      path="/api/apprenants/{id}", 
+     *      name="update_apprenant",
+     *      methods="PUT",
      *      defaults={
-     *          "_controller"="\App\ApprenantController::createApprenant",
+     *          "_controller"="\App\ApprenantController::updateApprenant",
      *          "_api_ressource_class"=Apprenant::class,
-     *          "_api_collection_operation_name"="create_apprenant"
+     *          "_api_item_operation_name"="update_apprenant"
      *      }
      * )
      */
-    public function createApprenant(Request $req): Response
+    public function updateApprenant(Request $req, int $id, ApprenantRepository $repo): Response
     {
-        $user = $this->userService->createUser($req, self::$att_name, Apprenant::class);
-        // dd($user);
-        $this->em->persist($user);
-        $this->em->flush();
+        $apprenant = $repo->find($id);
+        if($apprenant && !$apprenant->getIsDeleted()) {
+            $userTab = $this->uploadSer->getContentFromRequest($req, "avatar");
+            if($apprenant->getStatut()){
+                $userTab["statut"] = false;
+            }
+            // dd($userTab);
+            $apprenant = $this->userService->updateUser($apprenant, $userTab);
+            // dd($user);
+
+            $this->em->flush();
+        }
         
-        return $this->json($user, Response::HTTP_CREATED, [], ["groups" => "user_read"]);
+        return $this->json($apprenant, Response::HTTP_OK, [], ["groups" => "user_read"]);
     }
+
+    
 }

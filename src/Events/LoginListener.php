@@ -18,16 +18,16 @@ class LoginListener
     public function onLoginSuccess(AuthenticationEvent $event) {
         $user = $event->getAuthenticationToken()->getUser();
 
-        if (!$user instanceof Apprenant) {
-            return false;
-        }
+        // if (!$user instanceof Apprenant) {
+        //     return false;
+        // }
 
-        if (!$user->getStatut()){
-            // dd('not connected yet');
-            $user->setStatut(true);
-            $this->em->persist($user);
-            $this->em->flush();
-        }
+        // if (!$user->getStatut()){
+        //     // dd('not connected yet');
+        //     // $user->setStatut(true);
+        //     // $this->em->persist($user);
+        //     // $this->em->flush();
+        // }
 
     }
 }

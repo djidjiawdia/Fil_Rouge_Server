@@ -75,7 +75,10 @@ class User implements UserInterface
      *      "promo_read",
      *      "groupe_write",
      *      "promo_principal_read",
-     *      "promo_apprenant_attente"
+     *      "promo_apprenant_attente",
+     *      "profilsortie_read",
+     *      "groupe_read",
+     *      "groupe_app_read"
      * })
      */
     protected $id;
@@ -94,7 +97,8 @@ class User implements UserInterface
      *      "promo_apprenant_attente",
      *      "promo_read",
      *      "groupe_read",
-     *      "groupe_app_read"
+     *      "groupe_app_read",
+     *      "profilsortie_read"
      * })
      */
     protected $email;
@@ -104,6 +108,7 @@ class User implements UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Groups({"user_read"})
      */
     protected $password;
 
@@ -134,14 +139,15 @@ class User implements UserInterface
      *      "promo_principal_read",
      *      "promo_apprenant_attente",
      *      "groupe_read",
-     *      "groupe_app_read"
+     *      "groupe_app_read",
+     *      "profilsortie_read"
      * })
      */
     protected $nom;
 
     /**
      * @ORM\Column(type="blob", nullable=true)
-     * @Groups({"user_read", "profil_read", "user_write", "promo_principal_read"})
+     * @Groups({"user_read", "profil_read", "user_write", "promo_principal_read", "profilsortie_read"})
      */
     protected $avatar;
 

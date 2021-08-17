@@ -19,8 +19,6 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class UserController extends AbstractController
 {
-    static $att_name = "admin";
-
     private $em;
     private $uploadSer;
     private $userService;
