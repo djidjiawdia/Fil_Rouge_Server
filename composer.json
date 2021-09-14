@@ -80,9 +80,7 @@
             "php bin/console doctrine:fixtures:load --group=group1 --no-interaction"
         ],
         "post-update-cmd": [
-            "@auto-scripts",
-            "php bin/console doctrine:database:drop --if-exists --force",
-            "php bin/console doctrine:database:create"
+            "@auto-scripts"
         ]
     },
     "conflict": {
